@@ -15,4 +15,9 @@ public class Account
 
   public required User User {set; get;}
 
+  public required ICollection<Session> AccountSessions {get; set;} = [];
+
+  [MaxLength(4)]
+  public required int VerificationCode {get; set;}
+
 }

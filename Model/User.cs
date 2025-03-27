@@ -19,18 +19,15 @@ public class User
 
   public required UserState State {get; set;}
 
-  [MaxLength(4)]
-  public required int VerificationCode {get; set;}
-
   [Url]
   public required string ProfilePicture {get; set;}
 
   public required DateOnly LastUpdatedAt {get; set;}
 
-  public ICollection<Topic> UserTopics {get;} = []; 
+  public ICollection<Topic> UserTopics {get; set;} = []; 
 
-  public ICollection<Subject> UserSubjects {get;} = []; 
+  public ICollection<Subject> UserSubjects {get; set;} = []; 
 
-  public ICollection<Task> UserTasks {get;} = []; 
+  public ICollection<Task> UserTasks {get; set;} = []; 
  
 }

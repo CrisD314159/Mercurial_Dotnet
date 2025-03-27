@@ -4,7 +4,7 @@ public class CheckList
 {
   public required String Id {set; get;}
   
-  public ICollection<CheckListItem> CheckListItems {get;} = [];
+  public ICollection<CheckListItem> CheckListItems {get; set;} = [];
 
   public required String TaskId {set; get;}
 

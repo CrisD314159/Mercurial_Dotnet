@@ -1,4 +1,5 @@
 using MercurialBackendDotnet.DB;
+using MercurialBackendDotnet.Exceptions.ExceptionsFilters;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContextPool<MercurialDBContext> (o =>
     o.UseNpgsql(builder.Configuration.GetConnectionString("DBConnection"))
 );
+
+builder.Services.AddControllers(options =>{
+    options.Filters.Add<EntityAlreadyExistsExceptionFilter>();
+    options.Filters.Add<EntityNotFoundExceptionFilter>();
+    options.Filters.Add<InvalidDataExceptionFilter>();
+    options.Filters.Add<NotVerifiedExceptionFilter>();
+    options.Filters.Add<UnauthorizedExceptionFilter>();
+    options.Filters.Add<UnexpectedExceptionFilter>();
+    options.Filters.Add<VerificationExceptionFilter>();
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
