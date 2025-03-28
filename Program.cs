@@ -1,5 +1,7 @@
 using MercurialBackendDotnet.DB;
 using MercurialBackendDotnet.Exceptions.ExceptionsFilters;
+using MercurialBackendDotnet.Services.Implementations;
+using MercurialBackendDotnet.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContextPool<MercurialDBContext> (o =>
     o.UseNpgsql(builder.Configuration.GetConnectionString("DBConnection"))
 );
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ICheckListService, CheckListService>();
+builder.Services.AddScoped<ISubjectService, SubjectService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<ITopicService, TopicService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddControllers(options =>{
     options.Filters.Add<EntityAlreadyExistsExceptionFilter>();
