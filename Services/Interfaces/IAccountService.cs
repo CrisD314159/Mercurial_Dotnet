@@ -1,5 +1,6 @@
 namespace MercurialBackendDotnet.Services.Interfaces;
 
-public interface IAccountService{
+public interface IAccountService
+{
   
 }
