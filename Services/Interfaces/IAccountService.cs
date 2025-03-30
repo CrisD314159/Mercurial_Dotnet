@@ -6,7 +6,7 @@ namespace MercurialBackendDotnet.Services.Interfaces;
 
 public interface IAccountService
 {
-  void  CreateAccount(User user, string email, string password);
+  Account  CreateAccount(User user, string email, string password);
 
   void UpdateAccount(UpdateAccountDTO updateAccountDTO);
 

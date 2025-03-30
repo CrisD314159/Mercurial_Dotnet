@@ -1,3 +1,3 @@
 namespace MercurialBackendDotnet.Dto.OutputDTO;
 
-public record GetChecklistDTO(string Id, List<NodeDTO> Nodes);
+public record GetChecklistDTO(long Id, List<NodeDTO> Nodes);

@@ -13,7 +13,7 @@ builder.Services.AddDbContextPool<MercurialDBContext> (o =>
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICheckListService, CheckListService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
-builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<IAssignmentService, AssignmentService>();
 builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<IUserService, UserService>();
 

@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MercurialBackendDotnet.Model;
 
 public class Account
 {
-  public required string Id {set; get;}
+  public required Guid Id {set; get;} = Guid.NewGuid();
 
   [EmailAddress]
   public required string Email {set; get;}

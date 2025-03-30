@@ -4,14 +4,14 @@ using MercurialBackendDotnet.Dto.OutputDTO;
 
 namespace MercurialBackendDotnet.Services.Interfaces;
 
-public interface ITaskService
+public interface IAssignmentService
 {
   void CreateTask(CreateTaskDTO createTaskDTO);
 
-  void UpdateTask(UpdateTaskDTO updateTaskDTO);
+  void UpdateTask(UpdateAssignmentDTO updateTaskDTO);
 
   void DeleteTask(string taskId);
 
-  GetUserTasksDTO GetUserTodoTasks(string userId, int offset, int limit);
-  GetUserTasksDTO GetUserDoneTasks(string userId, int offset, int limit);
+  GetUserAssignmentsDTO GetUserTodoTasks(string userId, int offset, int limit);
+  GetUserAssignmentsDTO GetUserDoneTasks(string userId, int offset, int limit);
 }

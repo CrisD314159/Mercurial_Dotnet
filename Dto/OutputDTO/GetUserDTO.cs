@@ -1,3 +1,3 @@
 namespace MercurialBackendDotnet.Dto.OutputDTO;
 
-public record GetUserDTO(string Id, string Email, string ProfilePicture);
+public record GetUserDTO(Guid Id, string Email, string ProfilePicture);

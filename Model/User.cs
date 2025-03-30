@@ -6,16 +6,16 @@ namespace MercurialBackendDotnet.Model;
 
 public class User
 {
-  public required string Id {get; set;}
+  public required Guid Id {get; set;} = Guid.NewGuid();
 
   [MaxLength(100)]
   public required string Name {get; set;}
 
   public required DateOnly CreatedAt {get; set;}
 
-  public required string AccountId {set; get;}
+  public required Guid AccountId {set; get;}
 
-  public required Account UserAccount {get; set;}
+  public required Account Account {get; set;}
 
   public required UserState State {get; set;}
 
@@ -28,6 +28,6 @@ public class User
 
   public ICollection<Subject> UserSubjects {get; set;} = []; 
 
-  public ICollection<Task> UserTasks {get; set;} = []; 
+  public ICollection<Assignment> UserAssignments {get; set;} = []; 
  
 }

@@ -1,3 +1,3 @@
 namespace MercurialBackendDotnet.Dto.InputDTO;
 
-public record UpdateUserDTO(string name);
+public record UpdateUserDTO(string Name);

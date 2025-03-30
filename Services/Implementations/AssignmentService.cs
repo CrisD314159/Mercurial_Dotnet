@@ -5,7 +5,7 @@ using MercurialBackendDotnet.Services.Interfaces;
 
 namespace MercurialBackendDotnet.Services.Implementations;
 
-public class TaskService (MercurialDBContext dBContext) : ITaskService
+public class AssignmentService (MercurialDBContext dBContext) : IAssignmentService
 {
   private readonly MercurialDBContext _dbContext = dBContext;
   
@@ -19,17 +19,17 @@ public class TaskService (MercurialDBContext dBContext) : ITaskService
     throw new NotImplementedException();
   }
 
-  public GetUserTasksDTO GetUserDoneTasks(string userId, int offset, int limit)
+  public GetUserAssignmentsDTO GetUserDoneTasks(string userId, int offset, int limit)
   {
     throw new NotImplementedException();
   }
 
-  public GetUserTasksDTO GetUserTodoTasks(string userId, int offset, int limit)
+  public GetUserAssignmentsDTO GetUserTodoTasks(string userId, int offset, int limit)
   {
     throw new NotImplementedException();
   }
 
-  public void UpdateTask(UpdateTaskDTO updateTaskDTO)
+  public void UpdateTask(UpdateAssignmentDTO updateTaskDTO)
   {
     throw new NotImplementedException();
   }

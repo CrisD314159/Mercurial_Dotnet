@@ -2,9 +2,9 @@ namespace MercurialBackendDotnet.Model;
 
 public class Session
 {
-  public required string Id {set; get;}
+  public required long Id {set; get;}
 
-  public required string UserId {set; get;}
+  public required Guid UserId {set; get;}
 
   public required User User {set; get;}
 

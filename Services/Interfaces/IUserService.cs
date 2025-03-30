@@ -5,13 +5,13 @@ namespace MercurialBackendDotnet.Services.Interfaces;
 
 public interface IUserService
 {
-  void CreateUser(CreateUserDTO createUserDTO);
+  Task CreateUser(CreateUserDTO createUserDTO);
 
-  void UpdateUser(UpdateUserDTO updateUserDTO);
+  Task UpdateUser(UpdateUserDTO updateUserDTO);
 
-  GetUserDTO GetUserOverview(string userId);
+  Task<GetUserDTO> GetUserOverview(string userId);
 
-  void DeleteUser(string userId);
+  Task DeleteUser(string userId);
 
-  void VerifyUser(VerifyuserDTO verifyuserDTO);
+  Task VerifyUser(VerifyuserDTO verifyuserDTO);
 }

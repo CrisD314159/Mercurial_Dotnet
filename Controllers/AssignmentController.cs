@@ -4,6 +4,6 @@ namespace MercurialBackendDotnet.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TaskController(){
+public class AssignmentController(){
 
 }

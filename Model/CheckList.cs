@@ -2,13 +2,13 @@ namespace MercurialBackendDotnet.Model;
 
 public class CheckList
 {
-  public required String Id {set; get;}
+  public required long Id {set; get;}
   
   public ICollection<CheckListItem> CheckListItems {get; set;} = [];
 
-  public required String TaskId {set; get;}
+  public required Guid AssignmentId {set; get;}
 
-  public required Task Task {set; get;}
+  public required Assignment Assignment {set; get;}
 
   public required DateOnly CreatedAt {set; get;}
 

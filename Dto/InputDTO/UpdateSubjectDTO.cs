@@ -1,3 +1,3 @@
 namespace MercurialBackendDotnet.Dto.InputDTO;
 
-public record UpdateSubjectDTO(string Title);
+public record UpdateSubjectDTO(long SubjectId, string Title);

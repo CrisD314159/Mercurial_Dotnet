@@ -1,3 +1,3 @@
 namespace MercurialBackendDotnet.Dto.InputDTO;
 
-public record AddNodeDTO(string ListId, string Content);
+public record AddNodeDTO(long ListId, string Content);

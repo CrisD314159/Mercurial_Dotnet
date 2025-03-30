@@ -11,7 +11,7 @@ public class AccountService(MercurialDBContext dbContext) : IAccountService
 
   private readonly MercurialDBContext _dbContext = dbContext;
 
-  public void CreateAccount(User user, string email, string password)
+  public Account CreateAccount(User user, string email, string password)
   {
     throw new NotImplementedException();
   }
