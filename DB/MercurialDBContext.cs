@@ -11,7 +11,7 @@ public class MercurialDBContext (DbContextOptions<MercurialDBContext> options) :
 
   public required DbSet<Topic> Topics {set; get;}
 
-  public required DbSet<Assignment> Tasks {set; get;}
+  public required DbSet<Assignment> Assignments {set; get;}
 
   public required DbSet<Subject> Subjects {set; get;}
 

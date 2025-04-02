@@ -15,7 +15,7 @@ public class Topic
   [MaxLength(9)]
   public required string Color {get; set;}
 
-  public DateOnly CreatedAt {get; set;} = DateOnly.FromDateTime(DateTime.Now);
+  public DateOnly CreatedAt {get; set;} = DateOnly.FromDateTime(DateTime.UtcNow);
 
   public  Guid UserId {get; set;}
 

@@ -4,14 +4,14 @@ namespace MercurialBackendDotnet.Model;
 
 public class Subject
 {
-  public required long Id {get; set;}
+  public long Id {get; set;}
 
   [MaxLength(100)]
   public required string Name {get; set;}
 
-  public required DateOnly CreatedAt {get; set;}
+  public DateOnly CreatedAt {get; set;} = DateOnly.FromDateTime(DateTime.UtcNow);
 
-  public required Guid UserId {get; set;}
+  public Guid UserId {get; set;}
 
   public required User User {get; set;}
 

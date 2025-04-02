@@ -9,9 +9,9 @@ public interface ICheckListService
 
   Task AddNode(AddNodeDTO addNodeDTO);
 
-  Task<GetChecklistDTO> GetChecklis(long listId);
+  Task<GetChecklistDTO> GetChecklist(long listId);
 
-  Task RemoveNode(long nodeId);
+  Task RemoveNode(long listId, long nodeId);
 
   Task MarkAsDoneNode(long nodeId);
 

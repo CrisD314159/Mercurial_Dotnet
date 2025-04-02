@@ -1,3 +1,3 @@
 namespace MercurialBackendDotnet.Dto.OutputDTO;
 
-public record NodeDTO(long Id, string Content);
+public record NodeDTO(long Id, string Content, bool IsCompleted);

@@ -85,6 +85,7 @@ public class UserService(MercurialDBContext dBContext, IAccountService accountSe
     var user = await _dbContext.Users.FindAsync(id) ?? throw new EntityNotFoundException("User does not exist");
 
     user.Name = updateUserDTO.Name;
+    user.LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
     await _dbContext.SaveChangesAsync();
   }
 

@@ -5,14 +5,14 @@ namespace MercurialBackendDotnet.Model;
 
 public class CheckListItem
 {
-  public required long Id {set; get;}
+  public long Id {set; get;}
 
   [MaxLength(150)]
   public required string Content {set; get;}
 
   public required bool IsCompleted {set; get;}
 
-  public required long CheckListId {set; get;}
+  public long CheckListId {set; get;}
 
   public required CheckList CheckList {set; get;}
 
