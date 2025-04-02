@@ -8,37 +8,38 @@ namespace MercurialBackendDotnet.Services.Implementations;
 public class CheckListService (MercurialDBContext dbContext) : ICheckListService
 {
   private readonly MercurialDBContext _dbContext =dbContext;
-  public void AddNode(AddNodeDTO addNodeDTO)
+
+  public Task AddNode(AddNodeDTO addNodeDTO)
   {
     throw new NotImplementedException();
   }
 
-  public void CreateCheckList(string taskId)
+  public Task CreateCheckList(long taskId)
   {
     throw new NotImplementedException();
   }
 
-  public void DeleteCheckList(string listId)
+  public Task DeleteCheckList(long listId)
   {
     throw new NotImplementedException();
   }
 
-  public GetChecklistDTO GetChecklis(string listId)
+  public Task<GetChecklistDTO> GetChecklis(long listId)
   {
     throw new NotImplementedException();
   }
 
-  public void MarkAsDoneNode(string nodeId)
+  public Task MarkAsDoneNode(long nodeId)
   {
     throw new NotImplementedException();
   }
 
-  public void RemoveNode(string nodeId)
+  public Task RemoveNode(long nodeId)
   {
     throw new NotImplementedException();
   }
 
-  public void UnmarkAsDoneNode(string nodeId)
+  public Task UnmarkAsDoneNode(long nodeId)
   {
     throw new NotImplementedException();
   }

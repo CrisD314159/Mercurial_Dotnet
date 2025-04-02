@@ -6,19 +6,19 @@ namespace MercurialBackendDotnet.Services.Interfaces;
 
 public interface IAccountService
 {
-  Account  CreateAccount(User user, string email, string password);
+  Task<Account>  CreateAccount(User user, string email, string password);
 
-  void UpdateAccount(UpdateAccountDTO updateAccountDTO);
+  Task UpdateAccount(UpdateAccountDTO updateAccountDTO);
 
-  LoginResponseDTO Login(LoginDTO loginDTO);
+  Task<LoginResponseDTO> Login(LoginDTO loginDTO);
 
-  void Logout(string refreshToken);
+  Task Logout(string refreshToken);
 
-  void SendAccountCreatedVerificationCode(string email);
+  Task SendAccountCreatedVerificationCode(string email);
 
-  void SendRecoverAccountVerificationCode(string email);
+  Task SendRecoverAccountVerificationCode(string email);
 
-  bool VerifyCode(string email, int code);
+  Task<bool> VerifyCode(string email, int code);
 
   
 }

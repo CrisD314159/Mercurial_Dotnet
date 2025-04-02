@@ -5,11 +5,11 @@ namespace MercurialBackendDotnet.Services.Interfaces;
 
 public interface ITopicService
 {
-  void CreateTopic(CreateTopicDTO createTopicDTO);
+  Task CreateTopic(Guid userId, CreateTopicDTO createTopicDTO);
 
-  void UpdateTopic(UpdateTopicDTO updateTopicDTO);
+  Task UpdateTopic(UpdateTopicDTO updateTopicDTO);
 
-  void DeleteTopic(string topicId);
+  Task DeleteTopic(long topicId);
 
-  GetUserTopicsDTO GetUserTopics(string userId, int offset, int limit);
+  Task<GetUserTopicsDTO> GetUserTopics(Guid userId, int offset, int limit);
 }

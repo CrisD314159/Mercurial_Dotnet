@@ -11,37 +11,37 @@ public class AccountService(MercurialDBContext dbContext) : IAccountService
 
   private readonly MercurialDBContext _dbContext = dbContext;
 
-  public Account CreateAccount(User user, string email, string password)
+  public Task<Account> CreateAccount(User user, string email, string password)
   {
     throw new NotImplementedException();
   }
 
-  public LoginResponseDTO Login(LoginDTO loginDTO)
+  public Task<LoginResponseDTO> Login(LoginDTO loginDTO)
   {
     throw new NotImplementedException();
   }
 
-  public void Logout(string refreshToken)
+  public Task Logout(string refreshToken)
   {
     throw new NotImplementedException();
   }
 
-  public void SendAccountCreatedVerificationCode(string email)
+  public Task SendAccountCreatedVerificationCode(string email)
   {
     throw new NotImplementedException();
   }
 
-  public void SendRecoverAccountVerificationCode(string email)
+  public Task SendRecoverAccountVerificationCode(string email)
   {
     throw new NotImplementedException();
   }
 
-  public void UpdateAccount(UpdateAccountDTO updateAccountDTO)
+  public Task UpdateAccount(UpdateAccountDTO updateAccountDTO)
   {
     throw new NotImplementedException();
   }
 
-  public bool VerifyCode(string email, int code)
+  public Task<bool> VerifyCode(string email, int code)
   {
     throw new NotImplementedException();
   }

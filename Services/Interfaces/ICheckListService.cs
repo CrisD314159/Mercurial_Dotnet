@@ -5,19 +5,19 @@ namespace MercurialBackendDotnet.Services.Interfaces;
 
 public interface ICheckListService
 {
-  void CreateCheckList (string taskId);
+  Task CreateCheckList (long taskId);
 
-  void AddNode(AddNodeDTO addNodeDTO);
+  Task AddNode(AddNodeDTO addNodeDTO);
 
-  GetChecklistDTO GetChecklis(string listId);
+  Task<GetChecklistDTO> GetChecklis(long listId);
 
-  void RemoveNode(string nodeId);
+  Task RemoveNode(long nodeId);
 
-  void MarkAsDoneNode(string nodeId);
+  Task MarkAsDoneNode(long nodeId);
 
-  void UnmarkAsDoneNode(string nodeId);
+  Task UnmarkAsDoneNode(long nodeId);
 
-  void DeleteCheckList(string listId);
+  Task DeleteCheckList(long listId);
 
 
 }

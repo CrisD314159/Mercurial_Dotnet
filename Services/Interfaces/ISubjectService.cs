@@ -5,11 +5,11 @@ namespace MercurialBackendDotnet.Services.Interfaces;
 
 public interface ISubjectService
 {
-  void CreateSubjectDTO(CreateSubjectDTO createSubjectDTO);
+  Task CreateSubjectDTO(Guid userId, CreateSubjectDTO createSubjectDTO);
 
-  void UpdateSubject(UpdateSubjectDTO updateSubjectDTO);
+  Task UpdateSubject(UpdateSubjectDTO updateSubjectDTO);
 
-  void DeleteSubject(string subjectId);
+  Task DeleteSubject(long subjectId);
 
-  GetUserSubjectsDTO GetUserSubjects(string userId, int offset, int limit);
+  Task<GetUserSubjectsDTO> GetUserSubjects(Guid userId, int offset, int limit);
 }

@@ -9,22 +9,23 @@ public class SubjectService (MercurialDBContext dBContext) : ISubjectService
 {
 
   private readonly MercurialDBContext _dbContext = dBContext;
-  public void CreateSubjectDTO(CreateSubjectDTO createSubjectDTO)
+
+  public Task CreateSubjectDTO(Guid userId, CreateSubjectDTO createSubjectDTO)
   {
     throw new NotImplementedException();
   }
 
-  public void DeleteSubject(string subjectId)
+  public Task DeleteSubject(long subjectId)
   {
     throw new NotImplementedException();
   }
 
-  public GetUserSubjectsDTO GetUserSubjects(string userId, int offset, int limit)
+  public Task<GetUserSubjectsDTO> GetUserSubjects(Guid userId, int offset, int limit)
   {
     throw new NotImplementedException();
   }
 
-  public void UpdateSubject(UpdateSubjectDTO updateSubjectDTO)
+  public Task UpdateSubject(UpdateSubjectDTO updateSubjectDTO)
   {
     throw new NotImplementedException();
   }

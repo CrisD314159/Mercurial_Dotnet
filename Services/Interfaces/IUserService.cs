@@ -7,11 +7,11 @@ public interface IUserService
 {
   Task CreateUser(CreateUserDTO createUserDTO);
 
-  Task UpdateUser(UpdateUserDTO updateUserDTO);
+  Task UpdateUser(Guid Id, UpdateUserDTO updateUserDTO);
 
-  Task<GetUserDTO> GetUserOverview(string userId);
+  Task<GetUserDTO> GetUserOverview(Guid userId);
 
-  Task DeleteUser(string userId);
+  Task DeleteUser(Guid userId);
 
   Task VerifyUser(VerifyuserDTO verifyuserDTO);
 }

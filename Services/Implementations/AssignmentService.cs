@@ -8,28 +8,28 @@ namespace MercurialBackendDotnet.Services.Implementations;
 public class AssignmentService (MercurialDBContext dBContext) : IAssignmentService
 {
   private readonly MercurialDBContext _dbContext = dBContext;
-  
-  public void CreateTask(CreateTaskDTO createTaskDTO)
+
+  public Task CreateAssignment(Guid userId, CreateTaskDTO createTaskDTO)
   {
     throw new NotImplementedException();
   }
 
-  public void DeleteTask(string taskId)
+  public Task DeleteAssignment(Guid taskId)
   {
     throw new NotImplementedException();
   }
 
-  public GetUserAssignmentsDTO GetUserDoneTasks(string userId, int offset, int limit)
+  public Task<GetUserAssignmentsDTO> GetUserDoneTasks(Guid userId, int offset, int limit)
   {
     throw new NotImplementedException();
   }
 
-  public GetUserAssignmentsDTO GetUserTodoTasks(string userId, int offset, int limit)
+  public Task<GetUserAssignmentsDTO> GetUserTodoTasks(Guid userId, int offset, int limit)
   {
     throw new NotImplementedException();
   }
 
-  public void UpdateTask(UpdateAssignmentDTO updateTaskDTO)
+  public Task UpdateAssignment(UpdateAssignmentDTO updateTaskDTO)
   {
     throw new NotImplementedException();
   }
