@@ -1,7 +1,12 @@
 namespace MercurialBackendDotnet.Exceptions;
 
-public class ExceededLimitException(object? value = null): Exception
+public class ExceededLimitException: Exception
 {
-  public int StatusCode{get; set;} = 409;
-  public object? Value = value;
+
+  public ExceededLimitException(string value)
+  {
+    Message = value;
+  }
+  public int StatusCode{get;} = 409;
+  public override string Message {get;}
 }

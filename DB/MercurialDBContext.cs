@@ -27,5 +27,28 @@ public class MercurialDBContext (DbContextOptions<MercurialDBContext> options) :
   
   public required DbSet<Account> Accounts {set; get;}
 
+  protected override void OnModelCreating(ModelBuilder modelBuilder)
+  {
+    modelBuilder.Entity<Assignment>()
+    .HasOne(a => a.Note)
+    .WithOne(n => n.Assignment)
+    .HasForeignKey<Note>(n => n.AssignmentId)
+    .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<Assignment>()
+        .HasOne(a => a.CheckList)
+        .WithOne(c => c.Assignment)
+        .HasForeignKey<CheckList>(c => c.AssignmentId)
+        .OnDelete(DeleteBehavior.Cascade); 
+
+    modelBuilder.Entity<CheckList>()
+    .HasMany(c => c.CheckListItems)
+    .WithOne(i => i.CheckList)
+    .HasForeignKey(c => c.CheckListId)
+    .OnDelete(DeleteBehavior.Cascade);
+
+
+  }
+
 
 }

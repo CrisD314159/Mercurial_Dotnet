@@ -1,3 +1,4 @@
+using FluentValidation;
 using FluentValidation.Results;
 using MercurialBackendDotnet.DB;
 using MercurialBackendDotnet.Dto.InputDTO;
@@ -10,10 +11,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MercurialBackendDotnet.Services.Implementations;
 
-public class SubjectService (MercurialDBContext dBContext) : ISubjectService
+public class SubjectService (MercurialDBContext dBContext, IValidator<CreateSubjectDTO> validatorCreate,
+IValidator<UpdateSubjectDTO> validatorUpdate
+) : ISubjectService
 {
 
   private readonly MercurialDBContext _dbContext = dBContext;
+  private readonly  IValidator<CreateSubjectDTO> _validatorCreate = validatorCreate;
+  private readonly IValidator<UpdateSubjectDTO> _validatorUpdate = validatorUpdate;
 
   /// <summary>
   /// Creates a subject
@@ -25,9 +30,7 @@ public class SubjectService (MercurialDBContext dBContext) : ISubjectService
   /// <exception cref="EntityNotFoundException"></exception>
   public async Task CreateSubjectDTO(Guid userId, CreateSubjectDTO createSubjectDTO)
   {
-    SubjectValidations validationRules = new();
-    ValidationResult result = validationRules.Validate(createSubjectDTO);
-    if(!result.IsValid) throw new VerificationException(result.Errors);
+    _validatorCreate.ValidateAndThrow(createSubjectDTO);
     if(await VerifyValidSubject(userId, createSubjectDTO.Title))
     {
       Subject subject = new()
@@ -108,9 +111,7 @@ public class SubjectService (MercurialDBContext dBContext) : ISubjectService
   /// <exception cref="EntityNotFoundException"></exception>
   public async Task UpdateSubject(UpdateSubjectDTO updateSubjectDTO)
   {
-    SubjectUpdateValidations validationRules =  new();
-    ValidationResult result = validationRules.Validate(updateSubjectDTO);
-    if(!result.IsValid) throw new VerificationException(result.Errors);
+    _validatorUpdate.ValidateAndThrow(updateSubjectDTO);
 
     var subject = await _dbContext.Subjects.FindAsync(updateSubjectDTO.SubjectId) 
     ?? throw new EntityNotFoundException("Subject not found");

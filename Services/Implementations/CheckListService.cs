@@ -68,10 +68,9 @@ public class CheckListService (MercurialDBContext dbContext) : ICheckListService
     var checkList = await _dbContext.CheckLists.Include(c => c.CheckListItems)
     .Where(c => c.Id == listId).FirstOrDefaultAsync() ?? throw new EntityNotFoundException("Checklist not found");
 
-    var assignment = await _dbContext.Assignments.Where(a => a.CheckListId == listId)
+    var assignment = await _dbContext.Assignments.Include(a => a.CheckList).Where(a => a.CheckList != null && a.CheckList.Id == listId)
     .FirstOrDefaultAsync() ?? throw new EntityNotFoundException("Assignment not found");
 
-    _dbContext.CheckListItems.RemoveRange(checkList.CheckListItems);
     _dbContext.CheckLists.Remove(checkList);
     assignment.CheckList = null;
     await _dbContext.SaveChangesAsync();

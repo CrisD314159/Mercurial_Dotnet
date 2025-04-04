@@ -1,6 +1,14 @@
 @MercurialBackendDotnet_HostAddress = http://localhost:5066
 
-GET {{MercurialBackendDotnet_HostAddress}}/weatherforecast/
+POST  {{MercurialBackendDotnet_HostAddress}}/user
 Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Pepe",
+  "email": "asasgmail.com",
+  "password":"asdasdas"
+}
 
 ###
+

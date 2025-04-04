@@ -6,7 +6,7 @@ namespace MercurialBackendDotnet.Services.Interfaces;
 
 public interface IAssignmentService
 {
-  Task CreateAssignment(Guid userId, CreateTaskDTO createTaskDTO);
+  Task CreateAssignment(Guid userId, CreateAssignmentDTO createAssignmentDTO);
 
   Task UpdateAssignment(UpdateAssignmentDTO updateTaskDTO);
 
@@ -15,4 +15,10 @@ public interface IAssignmentService
   Task<GetUserAssignmentsDTO> GetUserTodoTasks(Guid userId, int offset, int limit);
   
   Task<GetUserAssignmentsDTO> GetUserDoneTasks(Guid userId, int offset, int limit);
+
+  Task MarkAssignmentAsDone(Guid assignmentId);
+
+  Task MarkAssigmentInprogress(Guid assignmentId);
+
+  Task MarkAssigmentTodo(Guid assignmentId);
 }

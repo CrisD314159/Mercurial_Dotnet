@@ -5,18 +5,18 @@ namespace MercurialBackendDotnet.Model;
 
 public class Account
 {
-  public required Guid Id {set; get;} = Guid.NewGuid();
+  public Guid Id {set; get;} = Guid.NewGuid();
 
   [EmailAddress]
   public required string Email {set; get;}
 
   public required string Password {set; get;}
 
-  public required string UserId {set; get;}
+  public Guid UserId {set; get;}
 
-  public required User User {set; get;}
+  public User User {set; get;} = null!;
 
-  public required ICollection<Session> AccountSessions {get; set;} = [];
+  public ICollection<Session> AccountSessions {get; set;} = [];
 
   [MaxLength(4)]
   public required int VerificationCode {get; set;}

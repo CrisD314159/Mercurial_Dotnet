@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using FluentValidation;
 using FluentValidation.Results;
 using MercurialBackendDotnet.DB;
 using MercurialBackendDotnet.Dto.InputDTO;
@@ -7,16 +8,23 @@ using MercurialBackendDotnet.Exceptions;
 using MercurialBackendDotnet.Model;
 using MercurialBackendDotnet.Model.Enums;
 using MercurialBackendDotnet.Services.Interfaces;
+using MercurialBackendDotnet.Utils;
 using MercurialBackendDotnet.Validations;
 using Microsoft.EntityFrameworkCore;
 
 namespace MercurialBackendDotnet.Services.Implementations;
 
-public class UserService(MercurialDBContext dBContext, IAccountService accountService) : IUserService
+public class UserService(MercurialDBContext dBContext, IAccountService accountService
+, IValidator<CreateUserDTO> validator, IValidator<UpdateUserDTO> validatorUpdate
+) : IUserService
 {
   private readonly MercurialDBContext _dbContext = dBContext;
 
   private readonly IAccountService _accountService = accountService;
+
+  private readonly IValidator<CreateUserDTO> _validator = validator;
+
+  private readonly IValidator<UpdateUserDTO> _validatorUpdate = validatorUpdate;
 
   /// <summary>
   /// Creates a new user
@@ -28,13 +36,25 @@ public class UserService(MercurialDBContext dBContext, IAccountService accountSe
   public async Task CreateUser(CreateUserDTO createUserDTO)
   {
     if(await _dbContext.Users.AnyAsync(u => u.Account.Email == createUserDTO.Email ))
-    throw new EntityAlreadyExistsException("User Already Exists");
+    throw new EntityAlreadyExistsException("User already exists");
 
-    UserValidations validationRules = new ();
-    ValidationResult result = validationRules.Validate(createUserDTO);
-    if(!result.IsValid) throw new VerificationException(result.Errors);
+    _validator.ValidateAndThrow(createUserDTO);
 
-    /// TODO: Password hashing and user registration
+    var hashedPassword = PasswordManipulation.HashPassword(createUserDTO.Password);
+    var verificationCode = new Random().Next(1000, 9999);
+
+    User user = new (){
+      Name = createUserDTO.Name,
+      State = UserState.NOT_VERIFIED,
+      ProfilePicture = "https://api.dicebear.com/9.x/shapes/svg",
+      LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
+      Account = new Account{Email = createUserDTO.Email, Password = hashedPassword, VerificationCode = verificationCode }
+    };
+
+    await _accountService.SendAccountCreatedVerificationCode(createUserDTO.Email);
+
+    _dbContext.Users.Add(user);
+    await _dbContext.SaveChangesAsync();
 
   }
 
@@ -78,10 +98,7 @@ public class UserService(MercurialDBContext dBContext, IAccountService accountSe
   /// <exception cref="EntityNotFoundException"></exception>
   public async Task UpdateUser(Guid id, UpdateUserDTO updateUserDTO)
   {
-    UserUpdateValidations validations = new();
-    ValidationResult result = validations.Validate(updateUserDTO);
-    if(!result.IsValid) throw new VerificationException(result.Errors);
-
+    _validatorUpdate.ValidateAndThrow(updateUserDTO);
     var user = await _dbContext.Users.FindAsync(id) ?? throw new EntityNotFoundException("User does not exist");
 
     user.Name = updateUserDTO.Name;

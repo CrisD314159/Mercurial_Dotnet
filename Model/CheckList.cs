@@ -8,7 +8,7 @@ public class CheckList
 
   public Guid AssignmentId {set; get;}
 
-  public required Assignment Assignment {set; get;}
+  public required Assignment Assignment {set; get;} 
 
   public DateOnly CreatedAt {set; get;} =  DateOnly.FromDateTime(DateTime.UtcNow);
 

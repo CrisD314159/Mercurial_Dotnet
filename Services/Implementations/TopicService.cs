@@ -1,3 +1,4 @@
+using FluentValidation;
 using FluentValidation.Results;
 using MercurialBackendDotnet.DB;
 using MercurialBackendDotnet.Dto.InputDTO;
@@ -10,10 +11,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MercurialBackendDotnet.Services.Implementations;
 
-public class TopicService(MercurialDBContext dBContext) : ITopicService
+public class TopicService(MercurialDBContext dBContext, IValidator<CreateTopicDTO> validatorCreate,
+ IValidator<UpdateTopicDTO> validatorUpdate
+) : ITopicService
 {
 
   private readonly MercurialDBContext _dbContext = dBContext;
+  private readonly IValidator<CreateTopicDTO> _validatorCreate = validatorCreate;
+  private readonly IValidator<UpdateTopicDTO> _validatorUpdate = validatorUpdate;
 
   /// <summary>
   /// Creates a topic
@@ -25,9 +30,7 @@ public class TopicService(MercurialDBContext dBContext) : ITopicService
   /// <exception cref="EntityNotFoundException"></exception>
   public async Task CreateTopic(Guid userId, CreateTopicDTO createTopicDTO)
   {
-    TopicValidations validationRules = new();
-    ValidationResult result = validationRules.Validate(createTopicDTO);
-    if(!result.IsValid) throw new VerificationException(result.Errors);
+    _validatorCreate.ValidateAndThrow(createTopicDTO);
     if(await VerifyValidTopic(createTopicDTO.Title, userId) )
     {
       Topic topic = new(){
@@ -104,9 +107,7 @@ public class TopicService(MercurialDBContext dBContext) : ITopicService
   /// <exception cref="EntityNotFoundException"></exception>
   public async Task UpdateTopic(UpdateTopicDTO updateTopicDTO)
   {
-    TopicUpdateValidations validationRules = new();
-    ValidationResult result = validationRules.Validate(updateTopicDTO);
-    if(!result.IsValid) throw new VerificationException(result.Errors);
+    _validatorUpdate.ValidateAndThrow(updateTopicDTO);
 
     var topic = await _dbContext.Topics.FindAsync(updateTopicDTO.TopicId) 
     ?? throw new EntityNotFoundException("Topic does not exists");

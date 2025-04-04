@@ -15,6 +15,4 @@ public class CheckListItem
   public long CheckListId {set; get;}
 
   public required CheckList CheckList {set; get;}
-
-
 }

@@ -1,15 +1,18 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace MercurialBackendDotnet.Model;
 
 public class Note
 {
   public long Id {get; set;}
   
+  [MaxLength(500)]
   public string? Content {set; get;}
 
-  public required DateOnly CreatedAt {set; get;}
+  public DateOnly CreatedAt {set; get;} =  DateOnly.FromDateTime(DateTime.UtcNow);
 
-  public required Guid AssignmentId {set; get;}
+  public Guid AssignmentId {set; get;}
 
-  public required Assignment Assignment {set; get;}
+  public Assignment Assignment {set; get;} = null!;
 
 }

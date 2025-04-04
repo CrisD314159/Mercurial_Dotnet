@@ -1,10 +1,10 @@
 namespace MercurialBackendDotnet.Exceptions;
 
 
-public class EntityNotFoundException(object? value = null) : Exception
+public class EntityNotFoundException(string message) : Exception
 {
 
 
   public int StatusCode {get;} = 404;
-  public object? Value {get;} = value;
+  public override string Message {get;} = message;
 }

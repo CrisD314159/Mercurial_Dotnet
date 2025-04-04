@@ -6,16 +6,14 @@ namespace MercurialBackendDotnet.Model;
 
 public class User
 {
-  public required Guid Id {get; set;} = Guid.NewGuid();
+  public Guid Id {get; set;} = Guid.NewGuid();
 
   [MaxLength(100)]
   public required string Name {get; set;}
 
-  public required DateOnly CreatedAt {get; set;}
+  public DateOnly CreatedAt {get; set;} = DateOnly.FromDateTime(DateTime.UtcNow);
 
-  public required Guid AccountId {set; get;}
-
-  public required Account Account {get; set;}
+  public Account Account {get; set;} = null!;
 
   public required UserState State {get; set;}
 
