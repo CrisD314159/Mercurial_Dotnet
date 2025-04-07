@@ -1,8 +1,11 @@
 using MercurialBackendDotnet.DB;
 using MercurialBackendDotnet.Dto.InputDTO;
 using MercurialBackendDotnet.Dto.OutputDTO;
+using MercurialBackendDotnet.Exceptions;
 using MercurialBackendDotnet.Model;
 using MercurialBackendDotnet.Services.Interfaces;
+using MercurialBackendDotnet.Utils;
+using Microsoft.EntityFrameworkCore;
 
 namespace MercurialBackendDotnet.Services.Implementations;
 
@@ -26,14 +29,15 @@ public class AccountService(MercurialDBContext dbContext) : IAccountService
     throw new NotImplementedException();
   }
 
-  public Task SendAccountCreatedVerificationCode(string email)
+  public async Task SendAccountCreatedVerificationCode(string name, string email, int code)
   {
-    throw new NotImplementedException();
+    await EmailUtil.ReadFileToSendEmail(name, "Verify your email", email, "Thanks for sign up to Mercurial, use this code to verify your account", 
+    code);
   }
 
-  public Task SendRecoverAccountVerificationCode(string email)
+  public async Task SendRecoverAccountVerificationCode(string name, string email, int code)
   {
-    throw new NotImplementedException();
+    await EmailUtil.ReadFileToSendEmail(name, "Recover your account", email, "Use this code to recover your account :)", code);
   }
 
   public Task UpdateAccount(UpdateAccountDTO updateAccountDTO)
@@ -41,8 +45,10 @@ public class AccountService(MercurialDBContext dbContext) : IAccountService
     throw new NotImplementedException();
   }
 
-  public Task<bool> VerifyCode(string email, int code)
+  public async Task<bool> VerifyCode(string email, int code)
   {
-    throw new NotImplementedException();
+    var user = await _dbContext.Accounts.FirstOrDefaultAsync(a => a.Email == email && a.VerificationCode == code)
+    ?? throw new EntityNotFoundException("Account not found");
+    return true;
   }
 }

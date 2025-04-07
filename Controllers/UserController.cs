@@ -17,6 +17,6 @@ public class UserController(IUserService userService) : ControllerBase
   public async Task<IActionResult> CreateUser(CreateUserDTO createUserDTO)
   {
     await _userService.CreateUser(createUserDTO);
-    return Ok();
+    return Created();
   }
 }

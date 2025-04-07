@@ -14,9 +14,9 @@ public interface IAccountService
 
   Task Logout(string refreshToken);
 
-  Task SendAccountCreatedVerificationCode(string email);
+  Task SendAccountCreatedVerificationCode(string name, string email, int code);
 
-  Task SendRecoverAccountVerificationCode(string email);
+  Task SendRecoverAccountVerificationCode(string name, string email, int code);
 
   Task<bool> VerifyCode(string email, int code);
 

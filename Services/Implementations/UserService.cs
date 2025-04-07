@@ -46,12 +46,12 @@ public class UserService(MercurialDBContext dBContext, IAccountService accountSe
     User user = new (){
       Name = createUserDTO.Name,
       State = UserState.NOT_VERIFIED,
-      ProfilePicture = "https://api.dicebear.com/9.x/shapes/svg",
+      ProfilePicture = $"https://api.dicebear.com/9.x/glass/svg?seed={createUserDTO.Name}",
       LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
       Account = new Account{Email = createUserDTO.Email, Password = hashedPassword, VerificationCode = verificationCode }
     };
 
-    await _accountService.SendAccountCreatedVerificationCode(createUserDTO.Email);
+    await _accountService.SendAccountCreatedVerificationCode(createUserDTO.Name, createUserDTO.Email, verificationCode);
 
     _dbContext.Users.Add(user);
     await _dbContext.SaveChangesAsync();
