@@ -5,9 +5,18 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "Cristian",
-  "email": "vargasloaizacristian@gmail.com",
+  "name": "David",
+  "email": "cristiandavidvargas717@gmail.com",
   "password":"Cris-2004"
+}
+### Verify User
+PUT   {{MercurialBackendDotnet_HostAddress}}/verifyUser
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "cristiandavidvargas717@gmail.com",
+  "code":"6227"
 }
 
 ###

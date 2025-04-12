@@ -7,18 +7,20 @@ using MercurialBackendDotnet.Exceptions;
 using MercurialBackendDotnet.Model;
 using MercurialBackendDotnet.Services.Interfaces;
 using MercurialBackendDotnet.Validations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace MercurialBackendDotnet.Services.Implementations;
 
 public class SubjectService (MercurialDBContext dBContext, IValidator<CreateSubjectDTO> validatorCreate,
-IValidator<UpdateSubjectDTO> validatorUpdate
+IValidator<UpdateSubjectDTO> validatorUpdate, UserManager<User> userManager
 ) : ISubjectService
 {
 
   private readonly MercurialDBContext _dbContext = dBContext;
   private readonly  IValidator<CreateSubjectDTO> _validatorCreate = validatorCreate;
   private readonly IValidator<UpdateSubjectDTO> _validatorUpdate = validatorUpdate;
+  private readonly UserManager<User> _userManager = userManager;
 
   /// <summary>
   /// Creates a subject
@@ -28,7 +30,7 @@ IValidator<UpdateSubjectDTO> validatorUpdate
   /// <returns></returns>
   /// <exception cref="VerificationException"></exception>
   /// <exception cref="EntityNotFoundException"></exception>
-  public async Task CreateSubjectDTO(Guid userId, CreateSubjectDTO createSubjectDTO)
+  public async Task CreateSubjectDTO(string userId, CreateSubjectDTO createSubjectDTO)
   {
     _validatorCreate.ValidateAndThrow(createSubjectDTO);
     if(await VerifyValidSubject(userId, createSubjectDTO.Title))
@@ -55,7 +57,7 @@ IValidator<UpdateSubjectDTO> validatorUpdate
   /// <returns></returns>
   /// <exception cref="ExceededLimitException"></exception>
   /// <exception cref="VerificationException"></exception>
-  private async Task<bool> VerifyValidSubject(Guid userId, string title)
+  private async Task<bool> VerifyValidSubject(string userId, string title)
   {
     if(_dbContext.Subjects.Where(s => s.UserId == userId).Count() > 15) 
     throw new ExceededLimitException("You've reached your maximum ammount of subjects");
@@ -87,10 +89,12 @@ IValidator<UpdateSubjectDTO> validatorUpdate
   /// <param name="limit"></param>
   /// <returns></returns>
   /// <exception cref="EntityNotFoundException"></exception>
-  public async Task<GetUserSubjectsDTO> GetUserSubjects(Guid userId, int offset, int limit)
+  public async Task<GetUserSubjectsDTO> GetUserSubjects(string userId, int offset, int limit)
   {
-    if(!await _dbContext.Users.AnyAsync(u => u.Id == userId)) 
-    throw new EntityNotFoundException("User not found");
+   var user = await _userManager.FindByIdAsync(userId)
+    ?? throw new EntityNotFoundException("User not found");
+
+    if(!await _userManager.IsEmailConfirmedAsync(user)) throw new UnauthorizedException("You're not verified");
 
     var subjectsList = await _dbContext.Subjects.Where(s => s.UserId == userId).Select(s => new SubjectDTO(
       s.Id,

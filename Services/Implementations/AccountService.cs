@@ -14,7 +14,7 @@ public class AccountService(MercurialDBContext dbContext) : IAccountService
 
   private readonly MercurialDBContext _dbContext = dbContext;
 
-  public Task<Account> CreateAccount(User user, string email, string password)
+  public Task RefreshToken()
   {
     throw new NotImplementedException();
   }
@@ -29,13 +29,13 @@ public class AccountService(MercurialDBContext dbContext) : IAccountService
     throw new NotImplementedException();
   }
 
-  public async Task SendAccountCreatedVerificationCode(string name, string email, int code)
+  public async Task SendAccountCreatedVerificationCode(string name, string email, string code)
   {
     await EmailUtil.ReadFileToSendEmail(name, "Verify your email", email, "Thanks for sign up to Mercurial, use this code to verify your account", 
     code);
   }
 
-  public async Task SendRecoverAccountVerificationCode(string name, string email, int code)
+  public async Task SendRecoverAccountVerificationCode(string name, string email, string code)
   {
     await EmailUtil.ReadFileToSendEmail(name, "Recover your account", email, "Use this code to recover your account :)", code);
   }
@@ -45,10 +45,8 @@ public class AccountService(MercurialDBContext dbContext) : IAccountService
     throw new NotImplementedException();
   }
 
-  public async Task<bool> VerifyCode(string email, int code)
+  public  Task<bool> VerifyCode(string email, int code)
   {
-    var user = await _dbContext.Accounts.FirstOrDefaultAsync(a => a.Email == email && a.VerificationCode == code)
-    ?? throw new EntityNotFoundException("Account not found");
-    return true;
+      throw new NotImplementedException();
   }
 }

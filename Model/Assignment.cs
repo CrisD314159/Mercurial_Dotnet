@@ -22,7 +22,7 @@ public class Assignment
 
   public required Topic Topic {set; get;}
 
-  public Guid UserId {set; get;}
+  public string UserId {set; get;} = null!;
 
   public required User User {set; get;}
 

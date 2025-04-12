@@ -10,12 +10,14 @@ using MercurialBackendDotnet.Model.Enums;
 using MercurialBackendDotnet.Services.Interfaces;
 using MercurialBackendDotnet.Utils;
 using MercurialBackendDotnet.Validations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace MercurialBackendDotnet.Services.Implementations;
 
 public class UserService(MercurialDBContext dBContext, IAccountService accountService
-, IValidator<CreateUserDTO> validator, IValidator<UpdateUserDTO> validatorUpdate
+, IValidator<CreateUserDTO> validator, IValidator<UpdateUserDTO> validatorUpdate, UserManager<User> userManager,
+SignInManager<User> signInManager
 ) : IUserService
 {
   private readonly MercurialDBContext _dbContext = dBContext;
@@ -26,6 +28,10 @@ public class UserService(MercurialDBContext dBContext, IAccountService accountSe
 
   private readonly IValidator<UpdateUserDTO> _validatorUpdate = validatorUpdate;
 
+  private readonly UserManager<User> _userManager = userManager;
+
+  private readonly SignInManager<User> _signInManager = signInManager;
+
   /// <summary>
   /// Creates a new user
   /// </summary>
@@ -35,26 +41,29 @@ public class UserService(MercurialDBContext dBContext, IAccountService accountSe
   /// <exception cref="VerificationException"></exception>
   public async Task CreateUser(CreateUserDTO createUserDTO)
   {
-    if(await _dbContext.Users.AnyAsync(u => u.Account.Email == createUserDTO.Email ))
+    if(await _userManager.FindByEmailAsync(createUserDTO.Email) != null)
     throw new EntityAlreadyExistsException("User already exists");
 
     _validator.ValidateAndThrow(createUserDTO);
 
-    var hashedPassword = PasswordManipulation.HashPassword(createUserDTO.Password);
-    var verificationCode = new Random().Next(1000, 9999);
-
     User user = new (){
+      Id= Guid.NewGuid().ToString(),
       Name = createUserDTO.Name,
       State = UserState.NOT_VERIFIED,
-      ProfilePicture = $"https://api.dicebear.com/9.x/glass/svg?seed={createUserDTO.Name}",
+      ProfilePicture = $"https://api.dicebear.com/9.x/thumbs/svg?seed={createUserDTO.Name}",
       LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
-      Account = new Account{Email = createUserDTO.Email, Password = hashedPassword, VerificationCode = verificationCode }
+      VerificationCode = new Random().Next(1000, 9999).ToString(),
+      UserName = createUserDTO.Name,
+      Email = createUserDTO.Email,
+      EmailConfirmed = false
     };
 
-    await _accountService.SendAccountCreatedVerificationCode(createUserDTO.Name, createUserDTO.Email, verificationCode);
 
-    _dbContext.Users.Add(user);
-    await _dbContext.SaveChangesAsync();
+    var result = await _userManager.CreateAsync(user, createUserDTO.Password);
+    if(!result.Succeeded){
+      throw new VerificationException("Cannot create user");
+    }
+    await _accountService.SendAccountCreatedVerificationCode(createUserDTO.Name, createUserDTO.Email, user.VerificationCode);
 
   }
 
@@ -64,9 +73,10 @@ public class UserService(MercurialDBContext dBContext, IAccountService accountSe
   /// <param name="userId"></param>
   /// <returns></returns>
   /// <exception cref="EntityNotFoundException"></exception>
-  public async Task DeleteUser(Guid userId)
+  public async Task DeleteUser(string userId)
   {
-    var user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException("User does not exist");
+    var user = await _userManager.FindByIdAsync(userId) 
+    ?? throw new EntityNotFoundException("User not found");
     user.State = UserState.DELETED;
     await _dbContext.SaveChangesAsync();
   } 
@@ -77,14 +87,15 @@ public class UserService(MercurialDBContext dBContext, IAccountService accountSe
   /// <param name="userId"></param>
   /// <returns></returns>
   /// <exception cref="EntityNotFoundException"></exception>
-  public async Task<GetUserDTO> GetUserOverview(Guid userId)
+  public async Task<GetUserDTO> GetUserOverview(string userId)
   {
-    var user = await _dbContext.Users.Include(u => u.Account).Where(u => u.Id == userId).FirstOrDefaultAsync() ?? throw new EntityNotFoundException("User does not exists");
+    var user = await _userManager.FindByIdAsync(userId) ?? throw new EntityNotFoundException("User does not exists");
 
     return new GetUserDTO(
       user.Id,
-      user.Account.Email,
-      user.ProfilePicture
+      user.Email ?? throw new EntityNotFoundException("Email not found"),
+      user.ProfilePicture,
+      user.Name
     );
   }
 
@@ -96,14 +107,17 @@ public class UserService(MercurialDBContext dBContext, IAccountService accountSe
   /// <returns></returns>
   /// <exception cref="VerificationException"></exception>
   /// <exception cref="EntityNotFoundException"></exception>
-  public async Task UpdateUser(Guid id, UpdateUserDTO updateUserDTO)
+  public async Task UpdateUser(string id, UpdateUserDTO updateUserDTO)
   {
     _validatorUpdate.ValidateAndThrow(updateUserDTO);
-    var user = await _dbContext.Users.FindAsync(id) ?? throw new EntityNotFoundException("User does not exist");
+    var user = await _userManager.FindByIdAsync(id) ?? throw new EntityNotFoundException("User does not exist");
 
     user.Name = updateUserDTO.Name;
     user.LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
-    await _dbContext.SaveChangesAsync();
+    var result = await _userManager.UpdateAsync(user);
+    if(!result.Succeeded){
+      throw new VerificationException("Cannot update user");
+    }
   }
 
   /// <summary>
@@ -115,13 +129,14 @@ public class UserService(MercurialDBContext dBContext, IAccountService accountSe
   /// <exception cref="EntityNotFoundException"></exception>
   public async Task VerifyUser(VerifyuserDTO verifyuserDTO)
   {
-    if(!await _accountService.VerifyCode(verifyuserDTO.Email, verifyuserDTO.Code))
-    throw new VerificationException("Invalid code, please try again");
-
-    var user = await _dbContext.Users.Include(u=> u.Account).Where(u=> u.Account.Email == verifyuserDTO.Email).FirstOrDefaultAsync()
+    var user = await _userManager.FindByEmailAsync(verifyuserDTO.Email)
     ?? throw new EntityNotFoundException("User does not exists");
+
+    if (user.Email != verifyuserDTO.Email || user.VerificationCode != verifyuserDTO.Code)
+    throw new VerificationException("Invalid code or email");
     
+    user.EmailConfirmed = true;
     user.State = UserState.ACTIVE;
-    await _dbContext.SaveChangesAsync();
+    await _userManager.UpdateAsync(user);
   }
 }

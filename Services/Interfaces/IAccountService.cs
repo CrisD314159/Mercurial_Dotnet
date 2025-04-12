@@ -6,7 +6,7 @@ namespace MercurialBackendDotnet.Services.Interfaces;
 
 public interface IAccountService
 {
-  Task<Account>  CreateAccount(User user, string email, string password);
+  Task RefreshToken();
 
   Task UpdateAccount(UpdateAccountDTO updateAccountDTO);
 
@@ -14,9 +14,9 @@ public interface IAccountService
 
   Task Logout(string refreshToken);
 
-  Task SendAccountCreatedVerificationCode(string name, string email, int code);
+  Task SendAccountCreatedVerificationCode(string name, string email, string code);
 
-  Task SendRecoverAccountVerificationCode(string name, string email, int code);
+  Task SendRecoverAccountVerificationCode(string name, string email, string code);
 
   Task<bool> VerifyCode(string email, int code);
 

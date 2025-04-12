@@ -11,7 +11,7 @@ public class Subject
 
   public DateOnly CreatedAt {get; set;} = DateOnly.FromDateTime(DateTime.UtcNow);
 
-  public Guid UserId {get; set;}
+  public string UserId {get; set;} = null!;
 
   public required User User {get; set;}
 

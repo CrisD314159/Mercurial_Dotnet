@@ -1,14 +1,27 @@
 using MercurialBackendDotnet.Model;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace MercurialBackendDotnet.DB;
 
 
-public class MercurialDBContext (DbContextOptions<MercurialDBContext> options) : DbContext(options)
+public class MercurialDBContext: IdentityDbContext<User>
 {
+     public MercurialDBContext(DbContextOptions<MercurialDBContext> options)
+            : base(options)
+        {
+        }
 
-  public required DbSet<User> Users {set; get;}
 
+  /// <summary>
+  /// IdentityDbContext allow us to create a identity database, this includes 
+  /// a few entities to manage user registration 
+  /// 
+  /// IdentityRole<Guid> its used to map a Guia to the user ID
+  /// 
+  /// It's not necesary to instance a user DBset, IdentityDbContext does it for default
+  /// </summary>
   public required DbSet<Topic> Topics {set; get;}
 
   public required DbSet<Assignment> Assignments {set; get;}
@@ -24,11 +37,14 @@ public class MercurialDBContext (DbContextOptions<MercurialDBContext> options) :
   public required DbSet<CheckListItem> CheckListItems {set; get;}
 
   public required DbSet<CheckList> CheckLists {set; get;}
-  
-  public required DbSet<Account> Accounts {set; get;}
+
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
+
+    // This allows EF Core to use cascade deletion for 1 to many relations
+
+    base.OnModelCreating(modelBuilder);
     modelBuilder.Entity<Assignment>()
     .HasOne(a => a.Note)
     .WithOne(n => n.Assignment)

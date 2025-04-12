@@ -8,19 +8,21 @@ using MercurialBackendDotnet.Model;
 using MercurialBackendDotnet.Model.Enums;
 using MercurialBackendDotnet.Services.Interfaces;
 using MercurialBackendDotnet.Validations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 
 namespace MercurialBackendDotnet.Services.Implementations;
 
 public class AssignmentService (MercurialDBContext dBContext, IValidator<CreateAssignmentDTO> validatorCreate,
-IValidator<UpdateAssignmentDTO> validatorUpdate) : IAssignmentService
+IValidator<UpdateAssignmentDTO> validatorUpdate, UserManager<User> userManager) : IAssignmentService
 {
   private readonly MercurialDBContext _dbContext = dBContext;
   private readonly IValidator<CreateAssignmentDTO> _validatorCreate = validatorCreate;
   private readonly IValidator<UpdateAssignmentDTO> _validatorUpdate = validatorUpdate;
+  private readonly UserManager<User> _userManager = userManager;
 
-  public async Task CreateAssignment(Guid userId, CreateAssignmentDTO createAssignmentDTO)
+  public async Task CreateAssignment(string userId, CreateAssignmentDTO createAssignmentDTO)
   {
    _validatorCreate.ValidateAndThrow(createAssignmentDTO);
 
@@ -49,7 +51,7 @@ IValidator<UpdateAssignmentDTO> validatorUpdate) : IAssignmentService
     }
   }
 
-  private async Task<bool> VerifyValidAssignment(Guid userId, string title)
+  private async Task<bool> VerifyValidAssignment(string userId, string title)
   {
     if(_dbContext.Assignments.Where(a => a.UserId == userId).Count() > 700) 
     throw new ExceededLimitException("You've reached your maximum ammount of assignments");
@@ -70,19 +72,22 @@ IValidator<UpdateAssignmentDTO> validatorUpdate) : IAssignmentService
 
   }
 
-  public async Task<GetUserAssignmentsDTO> GetUserDoneTasks(Guid userId, int offset, int limit)
+  public async Task<GetUserAssignmentsDTO> GetUserDoneTasks(string userId, int offset, int limit)
   { 
     return await GetUserTasks(userId, offset, limit, AssignmentState.DONE);
   }
 
-  public async Task<GetUserAssignmentsDTO> GetUserTodoTasks(Guid userId, int offset, int limit)
+  public async Task<GetUserAssignmentsDTO> GetUserTodoTasks(string userId, int offset, int limit)
   {
    return await GetUserTasks(userId, offset, limit, AssignmentState.TODO);
   }
 
-  private async Task<GetUserAssignmentsDTO> GetUserTasks(Guid userId, int offset, int limit, AssignmentState state)
+  private async Task<GetUserAssignmentsDTO> GetUserTasks(string userId, int offset, int limit, AssignmentState state)
   {
-    if (!await _dbContext.Users.AnyAsync(u => u.Id == userId )) throw new EntityNotFoundException("User not found");
+   var user = await _userManager.FindByIdAsync(userId)
+    ?? throw new EntityNotFoundException("User not found");
+
+    if(!await _userManager.IsEmailConfirmedAsync(user)) throw new UnauthorizedException("You're not verified");
     var assignments = await _dbContext.Assignments.Include(a=> a.Note).Where(a => a.UserId == userId && a.TaskState == state)
     .Select(a => new AssignmentDTO(
       a.Id, a.Title, a.LastUpdatedAt, a.DueDate, 

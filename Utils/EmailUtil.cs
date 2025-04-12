@@ -9,12 +9,12 @@ namespace MercurialBackendDotnet.Utils;
 public static class EmailUtil
 {
 
-  public static async Task ReadFileToSendEmail(string name, string subject, string email, string content, int? verificationCode)
+  public static async Task ReadFileToSendEmail(string name, string subject, string email, string content, string? verificationCode)
   {
     var html = File.ReadAllText("./Templates/emailTemplate.html");
     html = html.Replace("{{name}}", name);
     html = html.Replace("{{content}}", content);
-    if(verificationCode > 0) html = html.Replace("{{verification_code}}", verificationCode.ToString());
+    if(!string.IsNullOrEmpty(verificationCode)) html = html.Replace("{{verification_code}}", verificationCode);
     var message = new MimeMessage();
     message.From.Add(new MailboxAddress("Mercurial", "mercurial.app24@gmail.com"));
     message.To.Add(new MailboxAddress(name, email));

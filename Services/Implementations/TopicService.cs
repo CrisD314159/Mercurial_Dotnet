@@ -7,18 +7,20 @@ using MercurialBackendDotnet.Exceptions;
 using MercurialBackendDotnet.Model;
 using MercurialBackendDotnet.Services.Interfaces;
 using MercurialBackendDotnet.Validations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace MercurialBackendDotnet.Services.Implementations;
 
 public class TopicService(MercurialDBContext dBContext, IValidator<CreateTopicDTO> validatorCreate,
- IValidator<UpdateTopicDTO> validatorUpdate
+ IValidator<UpdateTopicDTO> validatorUpdate, UserManager<User> userManager
 ) : ITopicService
 {
 
   private readonly MercurialDBContext _dbContext = dBContext;
   private readonly IValidator<CreateTopicDTO> _validatorCreate = validatorCreate;
   private readonly IValidator<UpdateTopicDTO> _validatorUpdate = validatorUpdate;
+  private readonly UserManager<User> _userManager = userManager;
 
   /// <summary>
   /// Creates a topic
@@ -28,7 +30,7 @@ public class TopicService(MercurialDBContext dBContext, IValidator<CreateTopicDT
   /// <returns></returns>
   /// <exception cref="VerificationException"></exception>
   /// <exception cref="EntityNotFoundException"></exception>
-  public async Task CreateTopic(Guid userId, CreateTopicDTO createTopicDTO)
+  public async Task CreateTopic(string userId, CreateTopicDTO createTopicDTO)
   {
     _validatorCreate.ValidateAndThrow(createTopicDTO);
     if(await VerifyValidTopic(createTopicDTO.Title, userId) )
@@ -54,7 +56,7 @@ public class TopicService(MercurialDBContext dBContext, IValidator<CreateTopicDT
   /// <returns></returns>
   /// <exception cref="VerificationException"></exception>
   /// <exception cref="EntityAlreadyExistsException"></exception>
-  private async Task<bool> VerifyValidTopic(string title, Guid userId)
+  private async Task<bool> VerifyValidTopic(string title, string userId)
   {
     if(_dbContext.Topics.Where(t => t.UserId == userId).Count() > 10) 
     throw new ExceededLimitException("You've reached your maximum ammount of topics");
@@ -83,11 +85,13 @@ public class TopicService(MercurialDBContext dBContext, IValidator<CreateTopicDT
   /// <param name="offset"></param>
   /// <param name="limit"></param>
   /// <returns></returns>
-  public async Task<GetUserTopicsDTO> GetUserTopics(Guid userId, int offset, int limit)
+  public async Task<GetUserTopicsDTO> GetUserTopics(string userId, int offset, int limit)
   {
-    if(!await _dbContext.Users.AnyAsync(u => u.Id == userId)) 
+    var user = await _userManager.FindByIdAsync(userId)
+    ?? throw new EntityNotFoundException("User not found");
 
-    throw new EntityNotFoundException("User not found");
+    if(!await _userManager.IsEmailConfirmedAsync(user)) throw new UnauthorizedException("You're not verified");
+
     var topicsList = await _dbContext.Topics.Where(t => t.UserId == userId).Select(t => new TopicDTO(
       t.Id,
       t.Title,

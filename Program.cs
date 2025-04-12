@@ -1,20 +1,57 @@
+using System.Text;
 using FluentValidation;
 using MercurialBackendDotnet.DB;
 using MercurialBackendDotnet.Dto.InputDTO;
 using MercurialBackendDotnet.Dto.OutputDTO;
 using MercurialBackendDotnet.Exceptions.ExceptionsFilters;
+using MercurialBackendDotnet.Model;
 using MercurialBackendDotnet.Services.Implementations;
 using MercurialBackendDotnet.Services.Interfaces;
 using MercurialBackendDotnet.Validations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAuthentication( options=>
+{
+    options.DefaultAuthenticateScheme =  JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme =  JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+   var config = builder.Configuration;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = config["Jwt:Issuer"],
+        ValidAudience = config["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"] 
+        ?? throw new InvalidOperationException("Jwt:Key is not configured")))
+    };
+});
+
 // Add services to the container.
-builder.Services.AddDbContextPool<MercurialDBContext> (o =>
+builder.Services.AddDbContext<MercurialDBContext> (o =>
     o.UseNpgsql(builder.Configuration.GetConnectionString("DBConnection"))
 );
+
+/// Used to add the identity framework core
+builder.Services.AddIdentity<User, IdentityRole<string>>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireUppercase = true;
+})
+.AddEntityFrameworkStores<MercurialDBContext>()
+.AddDefaultTokenProviders();
+
+
+//Services injection
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICheckListService, CheckListService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
@@ -53,6 +90,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
