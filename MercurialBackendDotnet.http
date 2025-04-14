@@ -10,13 +10,23 @@ Content-Type: application/json
   "password":"Cris-2004"
 }
 ### Verify User
-PUT   {{MercurialBackendDotnet_HostAddress}}/verifyUser
+PUT   {{MercurialBackendDotnet_HostAddress}}/user/verifyUser
 Accept: application/json
 Content-Type: application/json
 
 {
   "email": "cristiandavidvargas717@gmail.com",
-  "code":"6227"
+  "code":"6228"
+}
+
+### Login
+POST    {{MercurialBackendDotnet_HostAddress}}/account/login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "cristiandavidvargas717@gmail.com",
+  "password":"Cris-200"
 }
 
 ###

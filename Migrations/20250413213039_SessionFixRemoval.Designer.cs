@@ -3,6 +3,7 @@ using System;
 using MercurialBackendDotnet.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MercurialBackendDotnet.Migrations
 {
     [DbContext(typeof(MercurialDBContext))]
-    partial class MercurialDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250413213039_SessionFixRemoval")]
+    partial class SessionFixRemoval
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,31 +165,6 @@ namespace MercurialBackendDotnet.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PushSubscriptions");
-                });
-
-            modelBuilder.Entity("MercurialBackendDotnet.Model.Session", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<DateOnly>("ExpiresAt")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Fingerprint")
-                        .HasColumnType("text");
-
-                    b.Property<DateOnly>("SignedAt")
-                        .HasColumnType("date");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Sessions");
                 });
 
             modelBuilder.Entity("MercurialBackendDotnet.Model.Subject", b =>
@@ -530,17 +508,6 @@ namespace MercurialBackendDotnet.Migrations
                         .IsRequired();
 
                     b.Navigation("Assignment");
-                });
-
-            modelBuilder.Entity("MercurialBackendDotnet.Model.Session", b =>
-                {
-                    b.HasOne("MercurialBackendDotnet.Model.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MercurialBackendDotnet.Model.Subject", b =>

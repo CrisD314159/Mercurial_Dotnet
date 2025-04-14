@@ -78,7 +78,7 @@ SignInManager<User> signInManager
     var user = await _userManager.FindByIdAsync(userId) 
     ?? throw new EntityNotFoundException("User not found");
     user.State = UserState.DELETED;
-    await _dbContext.SaveChangesAsync();
+    await _userManager.UpdateAsync(user);
   } 
 
   /// <summary>
@@ -132,11 +132,15 @@ SignInManager<User> signInManager
     var user = await _userManager.FindByEmailAsync(verifyuserDTO.Email)
     ?? throw new EntityNotFoundException("User does not exists");
 
+    if(await _userManager.IsEmailConfirmedAsync(user)) throw new VerificationException("User is already verified");
+
     if (user.Email != verifyuserDTO.Email || user.VerificationCode != verifyuserDTO.Code)
     throw new VerificationException("Invalid code or email");
-    
+
     user.EmailConfirmed = true;
     user.State = UserState.ACTIVE;
+    user.VerificationCode = "0";
+    user.LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
     await _userManager.UpdateAsync(user);
   }
 }

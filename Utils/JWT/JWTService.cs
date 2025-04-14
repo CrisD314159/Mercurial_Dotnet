@@ -7,19 +7,24 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace MercurialBackendDotnet.Utils.JWT;
 
-public static class JWTGeneration{
+public static class JWTService{
 
 
 
-  public static string GenerateToken(Guid userId, string email, bool generateRefresh, IConfiguration configuration)
+  public static string GenerateToken(string userId, string email, string sessionId, bool generateRefresh, IConfiguration configuration)
   {
 
-    var claims = new []
+    var claims = new List<Claim>
     {
-      new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-      new Claim(ClaimTypes.Email, email)
+      new(ClaimTypes.NameIdentifier, userId),
+      new(ClaimTypes.Email, email)
     };
-    
+
+    if(!string.IsNullOrEmpty(sessionId))
+    {
+      claims.Add(new(ClaimTypes.Authentication, sessionId));
+    }
+
     var jwtKey = generateRefresh ? configuration["Jwt:RefreshKey"]: configuration["Jwt:Key"];
 
     if (string.IsNullOrEmpty(jwtKey))
@@ -40,6 +45,30 @@ public static class JWTGeneration{
 
     return new JwtSecurityTokenHandler().WriteToken(token);
 
+  }
+
+
+  public static ClaimsPrincipal ExtractRefreshToken(string refreshToken, IConfiguration configuration, out SecurityToken securityToken)
+  {
+    var handler = new JwtSecurityTokenHandler();
+    var key = Encoding.UTF8.GetBytes(configuration["Jwt:RefreshKey"] ?? throw new VerificationException("Key not found"));
+
+    var validationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ClockSkew = TimeSpan.Zero
+
+    };
+
+    var result = handler.ValidateToken(refreshToken, validationParameters , out securityToken) 
+    ?? throw new UnauthorizedException("Token not allowed");
+
+    return result;
+    
   }
   
 }

@@ -2,14 +2,16 @@ namespace MercurialBackendDotnet.Model;
 
 public class Session
 {
-  public required long Id {set; get;}
+  public string Id {set; get;} = Guid.NewGuid().ToString();
 
-  public required Guid UserId {set; get;}
+  public string UserId {set; get;} = null!;
 
   public required User User {set; get;}
 
   public string? Fingerprint {set; get;}
 
-  public required DateOnly ExpresAt {set; get;}
+  public required DateOnly ExpiresAt {set; get;}
+
+  public required DateOnly SignedAt {set; get;}
 
 }
