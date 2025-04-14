@@ -18,7 +18,17 @@ public class AccountController(IAccountService accountService) : ControllerBase
     return Ok(loginResponse);
   }
 
+  [HttpPost("logout")]
+  public async Task<IActionResult> Logout(RefreshTokenDTO refreshTokenDTO)
+  {
+    await _accountService.Logout(refreshTokenDTO.RefreshToken);
+    return Ok();
+  }
 
-
-
+  [HttpPut("refreshToken")]
+  public async Task<IActionResult> RefreshToken(RefreshTokenDTO refreshTokenDTO)
+  {
+    var refreshResponse = await _accountService.RefreshToken(refreshTokenDTO.RefreshToken);
+    return Ok(refreshResponse);
+  }
 }

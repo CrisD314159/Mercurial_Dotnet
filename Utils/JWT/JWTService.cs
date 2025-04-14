@@ -44,7 +44,6 @@ public static class JWTService{
     );
 
     return new JwtSecurityTokenHandler().WriteToken(token);
-
   }
 
 
@@ -64,10 +63,24 @@ public static class JWTService{
 
     };
 
-    var result = handler.ValidateToken(refreshToken, validationParameters , out securityToken) 
-    ?? throw new UnauthorizedException("Token not allowed");
+    try
+    {
+      var result = handler.ValidateToken(refreshToken, validationParameters , out securityToken);
 
-    return result;
+      return result;
+
+    }catch(SecurityTokenMalformedException)
+    {
+      throw new VerificationException("Invalid token type");
+    }
+    catch(SecurityTokenExpiredException)
+    {
+      throw new UnauthorizedException("Expired session");
+    }
+    catch(SecurityTokenException)
+    {
+      throw new UnauthorizedException("Token not allowed");
+    }
     
   }
   

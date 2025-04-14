@@ -8,6 +8,6 @@ public class UserUpdateValidations: AbstractValidator<UpdateUserDTO>
 {
   public UserUpdateValidations()
   {
-    RuleFor(u => u.Name).MaximumLength(100);
+    RuleFor(u => u.Name).MaximumLength(100).NotEmpty();
   }
 }

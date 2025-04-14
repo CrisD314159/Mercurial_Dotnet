@@ -36,7 +36,7 @@ UserManager<User> userManager, IConfiguration configuration) : IAccountService
     var email = claims.FindFirst(ClaimTypes.Email)?.Value.ToString()
     ?? throw new EntityNotFoundException("Claim not found");
 
-    if(session.ExpiresAt > DateOnly.FromDateTime(DateTime.UtcNow)) throw new UnauthorizedException("Expired session");
+    if(session.ExpiresAt < DateOnly.FromDateTime(DateTime.UtcNow)) throw new UnauthorizedException("Expired session");
 
     var token = JWTService.GenerateToken(userId, email, "", false, _configuration);
 
@@ -86,7 +86,7 @@ UserManager<User> userManager, IConfiguration configuration) : IAccountService
     var session = new Session()
     {
       User = user,
-      ExpiresAt = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(5)),
+      ExpiresAt = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
       SignedAt = DateOnly.FromDateTime(DateTime.UtcNow),
     };
 

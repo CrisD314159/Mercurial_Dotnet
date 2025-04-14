@@ -1,0 +1,52 @@
+@MercurialBackendDotnet_HostAddress = http://localhost:5066
+
+POST  {{MercurialBackendDotnet_HostAddress}}/user
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "David",
+  "email": "cristiandavidvargas717@gmail.com",
+  "password":"Cris-2004"
+}
+### Verify User
+PUT   {{MercurialBackendDotnet_HostAddress}}/user/verifyUser
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "cristiandavidvargas717@gmail.com",
+  "code":"2343"
+}
+
+### Login
+POST    {{MercurialBackendDotnet_HostAddress}}/account/login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "cristiandavidvargas717@gmail.com",
+  "password":"Cris-2004"
+
+}
+
+### LogOut
+POST    {{MercurialBackendDotnet_HostAddress}}/account/logout
+Accept: application/json
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjI3ODljNGU1LTE1MTMtNDA2Yy1hNTAwLWQ3OWE4OGMyYzI4YiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImNyaXN0aWFuZGF2aWR2YXJnYXM3MTdAZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvYXV0aGVudGljYXRpb24iOiI4MmZhNWYzYi0xMzM1LTRjOTQtODQzOC0yY2ZlNGNmNTNjNjkiLCJleHAiOjE3NDUyNDgxNjAsImlzcyI6Ik1lcmN1cmlhbCIsImF1ZCI6Ik1lcmN1cmlhbEZyb250In0.8EpROQConHqznrHqmwCgR-Svk4-M3-_q-YYOYwrihKw"
+}
+
+### LogOut
+PUT     {{MercurialBackendDotnet_HostAddress}}/account/refreshToken
+Accept: application/json
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjI3ODljNGU1LTE1MTMtNDA2Yy1hNTAwLWQ3OWE4OGMyYzI4YiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImNyaXN0aWFuZGF2aWR2YXJnYXM3MTdAZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvYXV0aGVudGljYXRpb24iOiIwNzgxMzc0MS01M2FiLTQ3MDktOTk3ZS1hNGFlMDdiMzIxNzciLCJleHAiOjE3NDQ2NDM4NjksImlzcyI6Ik1lcmN1cmlhbCIsImF1ZCI6Ik1lcmN1cmlhbEZyb250In0.GonHuCin1UzrV1uQAA9ws0Cq6tqxpeCJvGn6PGe6GHg"
+}
+
+###
+

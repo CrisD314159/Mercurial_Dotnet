@@ -35,6 +35,8 @@ builder.Services.AddAuthentication( options=>
     };
 });
 
+builder.Services.AddAuthorization();
+
 // Add services to the container.
 builder.Services.AddDbContext<MercurialDBContext> (o =>
     o.UseNpgsql(builder.Configuration.GetConnectionString("DBConnection"))
@@ -49,6 +51,7 @@ builder.Services.AddIdentity<User, IdentityRole<string>>(options =>
 })
 .AddEntityFrameworkStores<MercurialDBContext>()
 .AddDefaultTokenProviders();
+
 
 
 //Services injection

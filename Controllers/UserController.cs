@@ -4,6 +4,8 @@ using MercurialBackendDotnet.Dto.InputDTO;
 using MercurialBackendDotnet.Dto.OutputDTO;
 using MercurialBackendDotnet.Exceptions;
 using MercurialBackendDotnet.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MercurialBackendDotnet.Controllers;
@@ -22,7 +24,9 @@ public class UserController(IUserService userService) : ControllerBase
     return Created();
   }
 
+
   [HttpDelete]
+  [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
   public async Task<IActionResult> DeleteUser()
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
@@ -33,6 +37,7 @@ public class UserController(IUserService userService) : ControllerBase
   }
 
   [HttpGet]
+  [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
   public async Task<IActionResult> GetUserOverview()
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
@@ -42,6 +47,7 @@ public class UserController(IUserService userService) : ControllerBase
   }
 
   [HttpPut]
+  [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
   public async Task<IActionResult> UpdateUser(UpdateUserDTO updateUserDTO)
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
@@ -51,7 +57,7 @@ public class UserController(IUserService userService) : ControllerBase
     return Ok();
   }
 
-  [HttpPut ("verifyUser")]
+  [HttpPut("verifyUser")]
   public async Task<IActionResult> VerifyUser(VerifyuserDTO verifyuserDTO)
   {
     await _userService.VerifyUser(verifyuserDTO);
