@@ -7,6 +7,6 @@ public class SubjectValidations : AbstractValidator<CreateSubjectDTO>
 {
   public SubjectValidations()
   {
-    RuleFor(s => s.Title).MaximumLength(100);
+    RuleFor(s => s.Title).MaximumLength(70);
   }
 }

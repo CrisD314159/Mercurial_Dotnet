@@ -30,7 +30,7 @@ public class UserController(IUserService userService) : ControllerBase
   public async Task<IActionResult> DeleteUser()
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
-    throw new UnauthorizedException("You're not authorize to perform this action");
+    throw new UnauthorizedException("You're not authorized to perform this action");
 
     await _userService.DeleteUser(userId);
     return Ok();
@@ -41,7 +41,7 @@ public class UserController(IUserService userService) : ControllerBase
   public async Task<IActionResult> GetUserOverview()
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
-    throw new UnauthorizedException("You're not authorize to perform this action");
+    throw new UnauthorizedException("You're not authorized to perform this action");
     var user = await _userService.GetUserOverview(userId);
     return Ok(user);
   }
@@ -51,7 +51,7 @@ public class UserController(IUserService userService) : ControllerBase
   public async Task<IActionResult> UpdateUser(UpdateUserDTO updateUserDTO)
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
-    throw new UnauthorizedException("You're not authorize to perform this action");
+    throw new UnauthorizedException("You're not authorized to perform this action");
     
     await _userService.UpdateUser(userId, updateUserDTO);
     return Ok();

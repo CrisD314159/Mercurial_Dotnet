@@ -9,7 +9,7 @@ public class Topic
 {
   public long Id {get; set;}
 
-  [MaxLength(100)]
+  [MaxLength(70)]
   public required string Title {get; set;}
 
   [MaxLength(9)]

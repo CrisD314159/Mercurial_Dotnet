@@ -6,7 +6,7 @@ public class Subject
 {
   public long Id {get; set;}
 
-  [MaxLength(100)]
+  [MaxLength(70)]
   public required string Name {get; set;}
 
   public DateOnly CreatedAt {get; set;} = DateOnly.FromDateTime(DateTime.UtcNow);

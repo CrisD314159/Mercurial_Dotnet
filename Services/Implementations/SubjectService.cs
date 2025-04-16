@@ -38,7 +38,7 @@ IValidator<UpdateSubjectDTO> validatorUpdate, UserManager<User> userManager
       Subject subject = new()
       {
         Name = createSubjectDTO.Title,
-        User = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException("User not found"),
+        User = await _userManager.FindByIdAsync(userId) ?? throw new EntityNotFoundException("User not found"),
         LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
       };
 
@@ -59,7 +59,7 @@ IValidator<UpdateSubjectDTO> validatorUpdate, UserManager<User> userManager
   /// <exception cref="VerificationException"></exception>
   private async Task<bool> VerifyValidSubject(string userId, string title)
   {
-    if(_dbContext.Subjects.Where(s => s.UserId == userId).Count() > 15) 
+    if(_dbContext.Subjects.Where(s => s.UserId == userId).Count() >= 15) 
     throw new ExceededLimitException("You've reached your maximum ammount of subjects");
     if (await _dbContext.Subjects.AnyAsync(s => s.Name == title && s.UserId == userId))
     throw new VerificationException($"There's already a subject with name {title}");
@@ -72,9 +72,9 @@ IValidator<UpdateSubjectDTO> validatorUpdate, UserManager<User> userManager
   /// <param name="subjectId"></param>
   /// <returns></returns>
   /// <exception cref="EntityNotFoundException"></exception>
-  public async Task DeleteSubject(long subjectId)
+  public async Task DeleteSubject(string userid, long subjectId)
   {
-    var subject = await _dbContext.Subjects.FindAsync(subjectId) 
+    var subject = await _dbContext.Subjects.FirstOrDefaultAsync(s => s.UserId == userid && s.Id == subjectId) 
     ?? throw new EntityNotFoundException("Subject not found");
 
     _dbContext.Subjects.Remove(subject);
@@ -91,12 +91,14 @@ IValidator<UpdateSubjectDTO> validatorUpdate, UserManager<User> userManager
   /// <exception cref="EntityNotFoundException"></exception>
   public async Task<GetUserSubjectsDTO> GetUserSubjects(string userId, int offset, int limit)
   {
-   var user = await _userManager.FindByIdAsync(userId)
+    var user = await _userManager.FindByIdAsync(userId)
     ?? throw new EntityNotFoundException("User not found");
 
     if(!await _userManager.IsEmailConfirmedAsync(user)) throw new UnauthorizedException("You're not verified");
 
-    var subjectsList = await _dbContext.Subjects.Where(s => s.UserId == userId).Select(s => new SubjectDTO(
+    var subjectsList = await _dbContext.Subjects.Where(s => s.UserId == userId)
+    .OrderByDescending(s => s.CreatedAt)
+    .Select(s => new SubjectDTO(
       s.Id,
       s.Name,
       s.LastUpdatedAt
@@ -113,11 +115,11 @@ IValidator<UpdateSubjectDTO> validatorUpdate, UserManager<User> userManager
   /// <returns></returns>
   /// <exception cref="VerificationException"></exception>
   /// <exception cref="EntityNotFoundException"></exception>
-  public async Task UpdateSubject(UpdateSubjectDTO updateSubjectDTO)
+  public async Task UpdateSubject(string userId, UpdateSubjectDTO updateSubjectDTO)
   {
     _validatorUpdate.ValidateAndThrow(updateSubjectDTO);
 
-    var subject = await _dbContext.Subjects.FindAsync(updateSubjectDTO.SubjectId) 
+    var subject = await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Id == updateSubjectDTO.SubjectId && s.UserId == userId)
     ?? throw new EntityNotFoundException("Subject not found");
 
     subject.Name = updateSubjectDTO.Title;

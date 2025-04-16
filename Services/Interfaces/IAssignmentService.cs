@@ -8,17 +8,17 @@ public interface IAssignmentService
 {
   Task CreateAssignment(string userId, CreateAssignmentDTO createAssignmentDTO);
 
-  Task UpdateAssignment(UpdateAssignmentDTO updateTaskDTO);
+  Task UpdateAssignment(string userId, UpdateAssignmentDTO updateTaskDTO);
 
-  Task DeleteAssignment(Guid taskId);
+  Task DeleteAssignment(string userId, Guid assignmentId);
 
   Task<GetUserAssignmentsDTO> GetUserTodoTasks(string userId, int offset, int limit);
   
   Task<GetUserAssignmentsDTO> GetUserDoneTasks(string userId, int offset, int limit);
 
-  Task MarkAssignmentAsDone(Guid assignmentId);
+  Task MarkAssignmentAsDone(string userId, Guid assignmentId);
 
-  Task MarkAssigmentInprogress(Guid assignmentId);
+  Task MarkAssigmentInprogress(string userId, Guid assignmentId);
 
-  Task MarkAssigmentTodo(Guid assignmentId);
+  Task MarkAssigmentTodo(string userId, Guid assignmentId);
 }

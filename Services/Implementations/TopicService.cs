@@ -39,7 +39,7 @@ public class TopicService(MercurialDBContext dBContext, IValidator<CreateTopicDT
         Title = createTopicDTO.Title,
         Color = createTopicDTO.Color,
         LastUpdatedAt = DateOnly.FromDateTime(DateTime.Now),
-        User =  await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException("User not found")
+        User =  await _userManager.FindByIdAsync(userId) ?? throw new EntityNotFoundException("User not found")
       };
       await _dbContext.Topics.AddAsync(topic);
       await _dbContext.SaveChangesAsync();
@@ -58,7 +58,7 @@ public class TopicService(MercurialDBContext dBContext, IValidator<CreateTopicDT
   /// <exception cref="EntityAlreadyExistsException"></exception>
   private async Task<bool> VerifyValidTopic(string title, string userId)
   {
-    if(_dbContext.Topics.Where(t => t.UserId == userId).Count() > 10) 
+    if(_dbContext.Topics.Where(t => t.UserId == userId).Count() >= 10) 
     throw new ExceededLimitException("You've reached your maximum ammount of topics");
     if(await _dbContext.Topics.AnyAsync(t => t.Title == title && t.UserId == userId)) 
     throw new EntityAlreadyExistsException($"There's already a topic with title {title}");
@@ -71,9 +71,10 @@ public class TopicService(MercurialDBContext dBContext, IValidator<CreateTopicDT
   /// <param name="topicId"></param>
   /// <returns></returns>
   /// <exception cref="EntityNotFoundException"></exception>
-  public async Task DeleteTopic(long topicId)
+  public async Task DeleteTopic(string userId, long topicId)
   {
-    var topic = await _dbContext.Topics.FindAsync(topicId) ?? throw new EntityNotFoundException("Topic not found");
+    var topic = await _dbContext.Topics.FirstOrDefaultAsync(t => t.Id == topicId && t.UserId == userId)
+    ?? throw new EntityNotFoundException("Topic not found");
     _dbContext.Topics.Remove(topic);
     await _dbContext.SaveChangesAsync();
   }
@@ -92,7 +93,9 @@ public class TopicService(MercurialDBContext dBContext, IValidator<CreateTopicDT
 
     if(!await _userManager.IsEmailConfirmedAsync(user)) throw new UnauthorizedException("You're not verified");
 
-    var topicsList = await _dbContext.Topics.Where(t => t.UserId == userId).Select(t => new TopicDTO(
+    var topicsList = await _dbContext.Topics.Where(t => t.UserId == userId)
+    .OrderByDescending(t => t.CreatedAt)
+    .Select(t => new TopicDTO(
       t.Id,
       t.Title,
       t.Color,
@@ -109,12 +112,12 @@ public class TopicService(MercurialDBContext dBContext, IValidator<CreateTopicDT
   /// <returns></returns>
   /// <exception cref="VerificationException"></exception>
   /// <exception cref="EntityNotFoundException"></exception>
-  public async Task UpdateTopic(UpdateTopicDTO updateTopicDTO)
+  public async Task UpdateTopic(string userId, UpdateTopicDTO updateTopicDTO)
   {
     _validatorUpdate.ValidateAndThrow(updateTopicDTO);
 
-    var topic = await _dbContext.Topics.FindAsync(updateTopicDTO.TopicId) 
-    ?? throw new EntityNotFoundException("Topic does not exists");
+    var topic = await _dbContext.Topics.FirstOrDefaultAsync(t => t.Id == updateTopicDTO.TopicId && t.UserId == userId)
+    ?? throw new EntityNotFoundException("Topic not found");;
 
     topic.Color = updateTopicDTO.Color;
     topic.Title = updateTopicDTO.Title;

@@ -1,0 +1,40 @@
+@MercurialBackendDotnet_HostAddress = http://localhost:5066
+@Token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjBlZjdhMmNkLWUwZmUtNDQ3ZS04YzQ0LWJlYjZlOTM2ZmQ1MiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InZhcmdhc2xvYWl6YWNyaXN0aWFuQGdtYWlsLmNvbSIsImV4cCI6MTc0NDczMjUxMywiaXNzIjoiTWVyY3VyaWFsIiwiYXVkIjoiTWVyY3VyaWFsRnJvbnQifQ.KkC2M82wD2ECnWfHcW-8rIr61RnhHVVLGDWeO0-XiLE
+
+@Refresh = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjBlZjdhMmNkLWUwZmUtNDQ3ZS04YzQ0LWJlYjZlOTM2ZmQ1MiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InZhcmdhc2xvYWl6YWNyaXN0aWFuQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2F1dGhlbnRpY2F0aW9uIjoiMWJkOTk5MjYtNDEwMi00OGQyLWJjMDUtMGU2ZWNjNTVjNmE0IiwiZXhwIjoxNzQ1MjgxOTM1LCJpc3MiOiJNZXJjdXJpYWwiLCJhdWQiOiJNZXJjdXJpYWxGcm9udCJ9.84xTtS9RA3NYT0gT-OVsYCGowDHnOJf4WYDFpFQ8Wag
+
+### Create topic
+POST {{MercurialBackendDotnet_HostAddress}}/topic
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{Token}}
+
+{
+  "title":"formulación",
+  "Color":"#456456"
+}
+
+### UpdateTopic
+PUT {{MercurialBackendDotnet_HostAddress}}/topic
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{Token}}
+
+{
+  "topicId":12,
+  "title":"Teoría de lenguajes formales",
+  "color":"#890123"
+}
+
+### Delete Topic
+DELETE  {{MercurialBackendDotnet_HostAddress}}/topic/2
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{Token}}
+
+
+### Get User topics
+GET   {{MercurialBackendDotnet_HostAddress}}/topic?offset=0&limit=10
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{Token}}

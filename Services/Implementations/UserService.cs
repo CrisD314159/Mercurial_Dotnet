@@ -53,7 +53,7 @@ SignInManager<User> signInManager
       ProfilePicture = $"https://api.dicebear.com/9.x/thumbs/svg?seed={createUserDTO.Name}",
       LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
       VerificationCode = new Random().Next(1000, 9999).ToString(),
-      UserName = createUserDTO.Name,
+      UserName = createUserDTO.Name.Trim(),
       Email = createUserDTO.Email,
       EmailConfirmed = false
     };
@@ -61,6 +61,7 @@ SignInManager<User> signInManager
 
     var result = await _userManager.CreateAsync(user, createUserDTO.Password);
     if(!result.Succeeded){
+      Console.Write(result);
       throw new VerificationException("Cannot create user");
     }
     await _accountService.SendAccountCreatedVerificationCode(createUserDTO.Name, createUserDTO.Email, user.VerificationCode);

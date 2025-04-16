@@ -1,0 +1,46 @@
+@MercurialBackendDotnet_HostAddress = http://localhost:5066
+@Token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjBlZjdhMmNkLWUwZmUtNDQ3ZS04YzQ0LWJlYjZlOTM2ZmQ1MiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InZhcmdhc2xvYWl6YWNyaXN0aWFuQGdtYWlsLmNvbSIsImV4cCI6MTc0NDc3MzE3NiwiaXNzIjoiTWVyY3VyaWFsIiwiYXVkIjoiTWVyY3VyaWFsRnJvbnQifQ.PwOmbU31g-WpOeQoXHJfpu725iDP3rrSwqjoTSiZHW8
+
+@Refresh = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjBlZjdhMmNkLWUwZmUtNDQ3ZS04YzQ0LWJlYjZlOTM2ZmQ1MiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InZhcmdhc2xvYWl6YWNyaXN0aWFuQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2F1dGhlbnRpY2F0aW9uIjoiMWJkOTk5MjYtNDEwMi00OGQyLWJjMDUtMGU2ZWNjNTVjNmE0IiwiZXhwIjoxNzQ1MjgxOTM1LCJpc3MiOiJNZXJjdXJpYWwiLCJhdWQiOiJNZXJjdXJpYWxGcm9udCJ9.84xTtS9RA3NYT0gT-OVsYCGowDHnOJf4WYDFpFQ8Wag
+
+### Create topic
+POST {{MercurialBackendDotnet_HostAddress}}/checklist
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{Token}}
+
+{
+  "title":"Taller de expresiones regulares",
+  "subjectId":2,
+  "topicId":5,
+  "noteContent":"Crear 5 expresiones regulares, cada uno con su lenguaje y autómata",
+  "dueDate": "2025-04-15T18:30:00Z"
+}
+
+### Updatechecklist
+PUT {{MercurialBackendDotnet_HostAddress}}/checklist
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{Token}}
+
+{
+  "checklistId":"e6002d5c-94d0-4b9d-8694-905e3f0b5f44",
+  "title":"Taller de expresiones regulares (TLF)",
+  "subjectId":2,
+  "topicId":7,
+  "noteContent":"Crear 10 expresiones regulares, cada uno con su lenguaje y autómata y gráfica",
+  "dueDate": "2025-04-17T18:30:00Z"
+}
+
+### Delete checklist
+DELETE  {{MercurialBackendDotnet_HostAddress}}/checklist/5b7eedf7-9a2d-479b-ad69-5d6f82c2a9e5
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{Token}}
+
+
+### Get User checklists
+GET   {{MercurialBackendDotnet_HostAddress}}/checklist/todoAssignments?offset=0&limit=10
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{Token}}

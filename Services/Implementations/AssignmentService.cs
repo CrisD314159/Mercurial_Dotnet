@@ -22,6 +22,13 @@ IValidator<UpdateAssignmentDTO> validatorUpdate, UserManager<User> userManager) 
   private readonly IValidator<UpdateAssignmentDTO> _validatorUpdate = validatorUpdate;
   private readonly UserManager<User> _userManager = userManager;
 
+  /// <summary>
+  /// Creates a Assignment
+  /// </summary>
+  /// <param name="userId"></param>
+  /// <param name="createAssignmentDTO"></param>
+  /// <returns></returns>
+  /// <exception cref="EntityNotFoundException"></exception>
   public async Task CreateAssignment(string userId, CreateAssignmentDTO createAssignmentDTO)
   {
    _validatorCreate.ValidateAndThrow(createAssignmentDTO);
@@ -34,7 +41,7 @@ IValidator<UpdateAssignmentDTO> validatorUpdate, UserManager<User> userManager) 
           ?? throw new EntityNotFoundException("Subject not found"),
           Topic = await _dbContext.Topics.FindAsync(createAssignmentDTO.TopicId)
           ?? throw new EntityNotFoundException("Topic not found"),
-          User = await _dbContext.Users.FindAsync(userId) 
+          User = await _userManager.FindByIdAsync(userId) 
           ?? throw new EntityNotFoundException("User not found"),
           DueDate = createAssignmentDTO.DueDate,
           TaskState = AssignmentState.TODO,
@@ -51,9 +58,17 @@ IValidator<UpdateAssignmentDTO> validatorUpdate, UserManager<User> userManager) 
     }
   }
 
+  /// <summary>
+  /// Verfies if an assignment is able to create 
+  /// </summary>
+  /// <param name="userId"></param>
+  /// <param name="title"></param>
+  /// <returns></returns>
+  /// <exception cref="ExceededLimitException"></exception>
+  /// <exception cref="VerificationException"></exception>
   private async Task<bool> VerifyValidAssignment(string userId, string title)
   {
-    if(_dbContext.Assignments.Where(a => a.UserId == userId).Count() > 700) 
+    if(_dbContext.Assignments.Where(a => a.UserId == userId).Count() >= 700) 
     throw new ExceededLimitException("You've reached your maximum ammount of assignments");
 
     if(await _dbContext.Assignments.AnyAsync(a => a.UserId == userId && a.Title == title))
@@ -62,9 +77,10 @@ IValidator<UpdateAssignmentDTO> validatorUpdate, UserManager<User> userManager) 
     return true;
   }
 
-  public async Task DeleteAssignment(Guid taskId)
+  public async Task DeleteAssignment(string userId, Guid assignmentId)
   {
-    var assignment = await _dbContext.Assignments.Include(a => a.Note).Where(a => a.Id == taskId).FirstOrDefaultAsync()
+    var assignment = await _dbContext.Assignments.Include(a => a.Note)
+    .FirstOrDefaultAsync(a => a.Id == assignmentId && a.UserId == userId)
     ?? throw new EntityNotFoundException("Assignment not found");
 
     _dbContext.Assignments.Remove(assignment);
@@ -72,16 +88,41 @@ IValidator<UpdateAssignmentDTO> validatorUpdate, UserManager<User> userManager) 
 
   }
 
+  /// <summary>
+  /// Gets the user assignments with the Done tasks
+  /// </summary>
+  /// <param name="userId"></param>
+  /// <param name="offset"></param>
+  /// <param name="limit"></param>
+  /// <returns></returns>
   public async Task<GetUserAssignmentsDTO> GetUserDoneTasks(string userId, int offset, int limit)
   { 
     return await GetUserTasks(userId, offset, limit, AssignmentState.DONE);
   }
 
+  /// <summary>
+  /// Gets the user assignment with the Todo flag
+  /// </summary>
+  /// <param name="userId"></param>
+  /// <param name="offset"></param>
+  /// <param name="limit"></param>
+  /// <returns></returns>
   public async Task<GetUserAssignmentsDTO> GetUserTodoTasks(string userId, int offset, int limit)
   {
    return await GetUserTasks(userId, offset, limit, AssignmentState.TODO);
   }
 
+  /// <summary>
+  /// Gets the user tasks according to the param flag 
+  /// This method unifies both get done and todo assignments
+  /// </summary>
+  /// <param name="userId"></param>
+  /// <param name="offset"></param>
+  /// <param name="limit"></param>
+  /// <param name="state"></param>
+  /// <returns></returns>
+  /// <exception cref="EntityNotFoundException"></exception>
+  /// <exception cref="UnauthorizedException"></exception>
   private async Task<GetUserAssignmentsDTO> GetUserTasks(string userId, int offset, int limit, AssignmentState state)
   {
    var user = await _userManager.FindByIdAsync(userId)
@@ -89,6 +130,7 @@ IValidator<UpdateAssignmentDTO> validatorUpdate, UserManager<User> userManager) 
 
     if(!await _userManager.IsEmailConfirmedAsync(user)) throw new UnauthorizedException("You're not verified");
     var assignments = await _dbContext.Assignments.Include(a=> a.Note).Where(a => a.UserId == userId && a.TaskState == state)
+    .OrderByDescending(a => a.CreatedAt)
     .Select(a => new AssignmentDTO(
       a.Id, a.Title, a.LastUpdatedAt, a.DueDate, 
       a.SubjectId, a.TopicId, a.Note.Id, a.Note.Content ?? ""
@@ -97,10 +139,19 @@ IValidator<UpdateAssignmentDTO> validatorUpdate, UserManager<User> userManager) 
     return new GetUserAssignmentsDTO(assignments);
   }
 
-  public async Task UpdateAssignment(UpdateAssignmentDTO updateTaskDTO)
+
+  /// <summary>
+  /// Updates an assignment
+  /// </summary>
+  /// <param name="userId"></param>
+  /// <param name="updateTaskDTO"></param>
+  /// <returns></returns>
+  /// <exception cref="EntityNotFoundException"></exception>
+  public async Task UpdateAssignment(string userId, UpdateAssignmentDTO updateTaskDTO)
   {
-    var assignment = await _dbContext.Assignments.Include(a => a.Note).Where(a => a.Id == updateTaskDTO.AssignmentId)
-    .FirstOrDefaultAsync() ?? throw new EntityNotFoundException("Assignment not found");
+    var assignment = await _dbContext.Assignments.Include(a => a.Note)
+    .FirstOrDefaultAsync(a => a.Id == updateTaskDTO.AssignmentId && a.UserId == userId)
+     ?? throw new EntityNotFoundException("Assignment not found");
 
     if(assignment.SubjectId != updateTaskDTO.SubjectId)
     {
@@ -119,29 +170,55 @@ IValidator<UpdateAssignmentDTO> validatorUpdate, UserManager<User> userManager) 
         assignment.Note.Content = updateTaskDTO.NoteContent;
     }
     assignment.DueDate = updateTaskDTO.DueDate;
-    assignment.Title = assignment.Title;
+    assignment.Title = updateTaskDTO.Title;
     assignment.LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
     await _dbContext.SaveChangesAsync();
   }
 
-  public async Task MarkAssignmentAsDone(Guid assignmentId)
+  /// <summary>
+  /// Marks an assignment with the flag Done
+  /// </summary>
+  /// <param name="userId"></param>
+  /// <param name="assignmentId"></param>
+  /// <returns></returns>
+  public async Task MarkAssignmentAsDone(string userId, Guid assignmentId)
   {
-    await SetAssignmentState(assignmentId, AssignmentState.DONE);
+    await SetAssignmentState(userId, assignmentId, AssignmentState.DONE);
   }
 
-  public async Task MarkAssigmentInprogress(Guid assignmentId)
+  /// <summary>
+  /// Marks an assignment with in progress flag
+  /// </summary>
+  /// <param name="userId"></param>
+  /// <param name="assignmentId"></param>
+  /// <returns></returns>
+  public async Task MarkAssigmentInprogress(string userId, Guid assignmentId)
   {
-    await SetAssignmentState(assignmentId, AssignmentState.IN_PROGRESS);
+    await SetAssignmentState(userId, assignmentId, AssignmentState.IN_PROGRESS);
   }
 
-  public async Task MarkAssigmentTodo(Guid assignmentId)
+  /// <summary>
+  /// Marks an assignment with todo flag
+  /// </summary>
+  /// <param name="userId"></param>
+  /// <param name="assignmentId"></param>
+  /// <returns></returns>
+  public async Task MarkAssigmentTodo(string userId, Guid assignmentId)
   {
-    await SetAssignmentState(assignmentId, AssignmentState.TODO);
+    await SetAssignmentState(userId, assignmentId, AssignmentState.TODO);
   }
 
-  private async Task SetAssignmentState(Guid assignmentId, AssignmentState state)
+  /// <summary>
+  /// Modifies the state assignment value with the state param specified
+  /// </summary>
+  /// <param name="userId"></param>
+  /// <param name="assignmentId"></param>
+  /// <param name="state"></param>
+  /// <returns></returns>
+  /// <exception cref="EntityNotFoundException"></exception>
+  private async Task SetAssignmentState(string userId, Guid assignmentId, AssignmentState state)
   {
-    var assignment = await _dbContext.Assignments.FindAsync(assignmentId)
+    var assignment = await _dbContext.Assignments.FirstOrDefaultAsync(a => a.Id == assignmentId && a.UserId ==userId)
     ?? throw new EntityNotFoundException("Assignment not found");
     assignment.TaskState = state;
 

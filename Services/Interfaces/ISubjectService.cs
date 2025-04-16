@@ -7,9 +7,9 @@ public interface ISubjectService
 {
   Task CreateSubjectDTO(string userId, CreateSubjectDTO createSubjectDTO);
 
-  Task UpdateSubject(UpdateSubjectDTO updateSubjectDTO);
+  Task UpdateSubject(string userId, UpdateSubjectDTO updateSubjectDTO);
 
-  Task DeleteSubject(long subjectId);
+  Task DeleteSubject(string userId, long subjectId);
 
   Task<GetUserSubjectsDTO> GetUserSubjects(string userId, int offset, int limit);
 }

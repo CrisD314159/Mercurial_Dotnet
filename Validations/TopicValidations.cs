@@ -8,7 +8,7 @@ public class TopicValidations: AbstractValidator<CreateTopicDTO>
 {
   public TopicValidations()
   {
-    RuleFor(t => t.Title).MaximumLength(100);
-    RuleFor(t => t.Color).MaximumLength(9);
+    RuleFor(t => t.Title).MaximumLength(70).NotEmpty();
+    RuleFor(t => t.Color).MaximumLength(9).NotEmpty();
   }
 }
