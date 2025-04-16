@@ -72,6 +72,8 @@ builder.Services.AddScoped<IValidator<UpdateTopicDTO>, TopicUpdateValidations>()
 builder.Services.AddScoped<IValidator<CreateSubjectDTO>, SubjectValidations>();
 builder.Services.AddScoped<IValidator<CreateTopicDTO>, TopicValidations>();
 builder.Services.AddScoped<IValidator<UpdateUserDTO>, UserUpdateValidations>();
+builder.Services.AddScoped<IValidator<AddNodeDTO>, NodeValidations>();
+builder.Services.AddScoped<IValidator<UpdateNodeDTO>, NodeUpdateValidations>();
 
 builder.Services.AddControllers();
 

@@ -45,7 +45,8 @@ IValidator<UpdateAssignmentDTO> validatorUpdate, UserManager<User> userManager) 
           ?? throw new EntityNotFoundException("User not found"),
           DueDate = createAssignmentDTO.DueDate,
           TaskState = AssignmentState.TODO,
-          LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
+          LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
+          HasChecklist = false
       };
       Note note = new(){
         Content =  createAssignmentDTO.NoteContent,
@@ -132,7 +133,7 @@ IValidator<UpdateAssignmentDTO> validatorUpdate, UserManager<User> userManager) 
     var assignments = await _dbContext.Assignments.Include(a=> a.Note).Where(a => a.UserId == userId && a.TaskState == state)
     .OrderByDescending(a => a.CreatedAt)
     .Select(a => new AssignmentDTO(
-      a.Id, a.Title, a.LastUpdatedAt, a.DueDate, 
+      a.Id, a.Title, a.LastUpdatedAt, a.DueDate, a.TaskState,
       a.SubjectId, a.TopicId, a.Note.Id, a.Note.Content ?? ""
     )).Skip(offset).Take(limit).ToListAsync();
 

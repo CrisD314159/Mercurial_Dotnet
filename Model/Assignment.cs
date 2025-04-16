@@ -28,6 +28,8 @@ public class Assignment
 
   public CheckList? CheckList {set; get;} = null!;
 
+  public required bool HasChecklist {set; get;}
+
   public DateTime? DueDate {set; get;}
 
   public DateOnly CreatedAt {set; get;} = DateOnly.FromDateTime(DateTime.UtcNow);

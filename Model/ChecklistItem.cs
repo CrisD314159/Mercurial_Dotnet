@@ -7,7 +7,7 @@ public class CheckListItem
 {
   public long Id {set; get;}
 
-  [MaxLength(150)]
+  [MaxLength(105)]
   public required string Content {set; get;}
 
   public required bool IsCompleted {set; get;}
