@@ -1,5 +1,5 @@
 @MercurialBackendDotnet_HostAddress = http://localhost:5066
-@Refresh = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjBlZjdhMmNkLWUwZmUtNDQ3ZS04YzQ0LWJlYjZlOTM2ZmQ1MiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InZhcmdhc2xvYWl6YWNyaXN0aWFuQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2F1dGhlbnRpY2F0aW9uIjoiMWJkOTk5MjYtNDEwMi00OGQyLWJjMDUtMGU2ZWNjNTVjNmE0IiwiZXhwIjoxNzQ1MjgxOTM1LCJpc3MiOiJNZXJjdXJpYWwiLCJhdWQiOiJNZXJjdXJpYWxGcm9udCJ9.84xTtS9RA3NYT0gT-OVsYCGowDHnOJf4WYDFpFQ8Wag
+@Refresh = 
 
 
 POST  {{MercurialBackendDotnet_HostAddress}}/user
@@ -33,7 +33,7 @@ Content-Type: application/json
 }
 
 ### LogOut
-POST    {{MercurialBackendDotnet_HostAddress}}/account/logout
+DELETE {{MercurialBackendDotnet_HostAddress}}/account/logout
 Accept: application/json
 Content-Type: application/json
 

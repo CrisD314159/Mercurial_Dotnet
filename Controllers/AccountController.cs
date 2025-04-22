@@ -18,7 +18,7 @@ public class AccountController(IAccountService accountService) : ControllerBase
     return Ok(loginResponse);
   }
 
-  [HttpPost("logout")]
+  [HttpDelete("logout")]
   public async Task<IActionResult> Logout(RefreshTokenDTO refreshTokenDTO)
   {
     await _accountService.Logout(refreshTokenDTO.RefreshToken);
