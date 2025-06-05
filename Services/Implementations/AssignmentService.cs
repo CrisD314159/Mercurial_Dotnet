@@ -126,7 +126,7 @@ IValidator<UpdateAssignmentDTO> validatorUpdate, UserManager<User> userManager) 
   /// <exception cref="UnauthorizedException"></exception>
   private async Task<GetUserAssignmentsDTO> GetUserTasks(string userId, int offset, int limit, AssignmentState state)
   {
-   var user = await _userManager.FindByIdAsync(userId)
+    var user = await _userManager.FindByIdAsync(userId)
     ?? throw new EntityNotFoundException("User not found");
 
     if(!await _userManager.IsEmailConfirmedAsync(user)) throw new UnauthorizedException("You're not verified");
@@ -134,7 +134,7 @@ IValidator<UpdateAssignmentDTO> validatorUpdate, UserManager<User> userManager) 
     .OrderByDescending(a => a.CreatedAt)
     .Select(a => new AssignmentDTO(
       a.Id, a.Title, a.LastUpdatedAt, a.DueDate, a.TaskState,
-      a.SubjectId, a.TopicId, a.Note.Id, a.Note.Content ?? ""
+      a.SubjectId, a.Subject.Name, a.TopicId, a.Topic.Title, a.Topic.Color, a.Note.Id, a.Note.Content ?? ""
     )).Skip(offset).Take(limit).ToListAsync();
 
     return new GetUserAssignmentsDTO(assignments);

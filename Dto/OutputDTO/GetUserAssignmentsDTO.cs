@@ -1,3 +1,3 @@
 namespace MercurialBackendDotnet.Dto.OutputDTO;
 
-public record GetUserAssignmentsDTO(List<AssignmentDTO> Tasks);
+public record GetUserAssignmentsDTO(List<AssignmentDTO> Assignments);
