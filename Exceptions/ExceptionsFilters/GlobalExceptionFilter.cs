@@ -9,6 +9,7 @@ public class GlobalExceptionFilter : IExceptionFilter
     private readonly ILogger<GlobalExceptionFilter> _logger;
 
     // Mapeo de excepciones a códigos de estado HTTP
+    // Este diccionario contiene todas las excepciones con sus correspondientes códigos http
     private static readonly Dictionary<Type, int> ExceptionStatusCodes = new()
     {
         { typeof(EntityNotFoundException), StatusCodes.Status404NotFound },
@@ -17,7 +18,6 @@ public class GlobalExceptionFilter : IExceptionFilter
         { typeof(EntityAlreadyExistsException), StatusCodes.Status400BadRequest },
         { typeof(ExceededLimitException), StatusCodes.Status409Conflict },
         { typeof(VerificationException), StatusCodes.Status400BadRequest}
-        // Agrega aquí más excepciones personalizadas según sea necesario
     };
 
     public GlobalExceptionFilter(ILogger<GlobalExceptionFilter> logger)
@@ -25,6 +25,7 @@ public class GlobalExceptionFilter : IExceptionFilter
         _logger = logger;
     }
 
+    // Este método se dispara cuando ocurre una excepción
     public void OnException(ExceptionContext context)
     {
         var exceptionType = context.Exception.GetType();

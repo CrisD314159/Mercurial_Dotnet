@@ -1,4 +1,4 @@
-@MercurialBackendDotnet_HostAddress = http://localhost:5066
+@MercurialBackendDotnet_HostAddress = https://localhost:5066
 @Refresh = 
 
 
@@ -28,7 +28,7 @@ Content-Type: application/json
 
 {
   "email": "vargasloaizacristian@gmail.com",
-  "password":""
+  "password":"Cris-2004"
 
 }
 

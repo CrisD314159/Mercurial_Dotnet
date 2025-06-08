@@ -34,3 +34,17 @@ Authorization: Bearer {{Token}}
 GET {{MercurialBackendDotnet_HostAddress}}/user
 Accept: application/json
 Authorization: Bearer {{Token}}
+### Get user overview
+
+POST  {{MercurialBackendDotnet_HostAddress}}/pushnotification
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{Token}}
+
+{
+  "token": "David",
+  "title": "test",
+  "message":"buenas",
+  "link":"ksd;aslds",
+  "dueDate": "2025-06-07T15:12:00Z"
+}
