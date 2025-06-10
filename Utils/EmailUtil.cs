@@ -9,9 +9,9 @@ namespace MercurialBackendDotnet.Utils;
 public static class EmailUtil
 {
 
-  public static async Task ReadFileToSendEmail(string name, string subject, string email, string content, string? verificationCode)
+  public static async Task ReadFileToSendEmail(string name, string subject, string email, string content, string? verificationCode, string file)
   {
-    var html = File.ReadAllText("./Templates/emailTemplate.html");
+    var html = File.ReadAllText($"./Templates/{file}.html");
     html = html.Replace("{{name}}", name);
     html = html.Replace("{{content}}", content);
     if(!string.IsNullOrEmpty(verificationCode)) html = html.Replace("{{verification_code}}", verificationCode);
@@ -23,6 +23,7 @@ public static class EmailUtil
     await SendSMTPMessage(message);
   }
 
+
   public static async Task SendSMTPMessage(MimeMessage message)
   {
     var client = new SmtpClient();
@@ -30,7 +31,7 @@ public static class EmailUtil
     var gmail = DotNetEnv.Env.GetString("GOOGLE_MAIL");
 
     await client.ConnectAsync("smtp.gmail.com", 465, MailKit.Security.SecureSocketOptions.SslOnConnect);
-    
+
     await client.AuthenticateAsync(gmail, key);
 
     await client.SendAsync(message);

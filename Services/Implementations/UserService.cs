@@ -32,6 +32,20 @@ SignInManager<User> signInManager
 
   private readonly SignInManager<User> _signInManager = signInManager;
 
+  public async Task ChangePassword(ChangePasswordDTO changePasswordDTO)
+  {
+    var user = await _userManager.FindByEmailAsync(changePasswordDTO.Email)
+    ?? throw new EntityNotFoundException("User not found");
+
+    var result = await _userManager.ResetPasswordAsync(user, changePasswordDTO.Code, changePasswordDTO.Password);
+
+    if (!result.Succeeded)
+    {
+      throw new InternalServerException(string.Join("; ", result.Errors.Select(e => e.Description)));
+    }
+
+  }
+
   /// <summary>
   /// Creates a new user
   /// </summary>
@@ -61,8 +75,7 @@ SignInManager<User> signInManager
 
     var result = await _userManager.CreateAsync(user, createUserDTO.Password);
     if(!result.Succeeded){
-      Console.Write(result);
-      throw new VerificationException("Cannot create user");
+      throw new InternalServerException("Cannot create user");
     }
     await _accountService.SendAccountCreatedVerificationCode(createUserDTO.Name, createUserDTO.Email, user.VerificationCode);
 
@@ -100,6 +113,17 @@ SignInManager<User> signInManager
     );
   }
 
+  public async Task RecoverAccount(RecoverAccountDTO recoverAccountDTO)
+  {
+    var user = await _userManager.FindByEmailAsync(recoverAccountDTO.Email)
+    ?? throw new EntityNotFoundException("User does not exists");
+
+    var recoveryCode = await _userManager.GeneratePasswordResetTokenAsync(user);
+    Console.WriteLine(recoveryCode);
+
+    await _accountService.SendRecoverAccountVerificationCode(user.Name, recoverAccountDTO.Email, recoveryCode);
+  }
+
   /// <summary>
   /// Updates the info from a user (name)
   /// </summary>
@@ -117,7 +141,7 @@ SignInManager<User> signInManager
     user.LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
     var result = await _userManager.UpdateAsync(user);
     if(!result.Succeeded){
-      throw new VerificationException("Cannot update user");
+      throw new InternalServerException("Cannot update user");
     }
   }
 

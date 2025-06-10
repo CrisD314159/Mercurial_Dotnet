@@ -17,7 +17,8 @@ public class GlobalExceptionFilter : IExceptionFilter
         { typeof(ValidationException), StatusCodes.Status400BadRequest },
         { typeof(EntityAlreadyExistsException), StatusCodes.Status400BadRequest },
         { typeof(ExceededLimitException), StatusCodes.Status409Conflict },
-        { typeof(VerificationException), StatusCodes.Status400BadRequest}
+        { typeof(VerificationException), StatusCodes.Status400BadRequest},
+        { typeof(InternalServerException), StatusCodes.Status500InternalServerError}
     };
 
     public GlobalExceptionFilter(ILogger<GlobalExceptionFilter> logger)

@@ -1,4 +1,4 @@
-@MercurialBackendDotnet_HostAddress = http://localhost:5066
+@MercurialBackendDotnet_HostAddress = https://localhost:5066
 @Token = 
 
 
@@ -47,4 +47,24 @@ Authorization: Bearer {{Token}}
   "message":"buenas",
   "link":"ksd;aslds",
   "dueDate": "2025-06-07T15:12:00Z"
+}
+
+### RecoverAccount
+PUT  {{MercurialBackendDotnet_HostAddress}}/user/recoverAccount
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email":"dkfpdkf;sdkfsdflk@gmail.com"
+}
+### RecoverAccount
+PUT  {{MercurialBackendDotnet_HostAddress}}/user/changePassword
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{Token}}
+
+{
+  "email":"vargasloaizacristian@gmail.com",
+  "code":"CfDJ8KteRa87mGJEkbxBb2VdhqWE1ggwY/3yuX5vtCnq0GBxFu24TX9JBhhx/PsfH326UJwhiMdTno0yG0nYH1K5J8R8dxEWrPN4fJCkacKG7910kBg58cN/wQ0B4+bSrXSnw39bFiYcKw0mVz43qL5cHWmj6topr3h+WkYlMwmRR5WIzmXzWJedDTmrVQt7nSdW5mB58S0Qu/x1CmVGO3TPwEhksEoM3io0stJhZPIRgHK/",
+  "password":"Paco-2025"
 }

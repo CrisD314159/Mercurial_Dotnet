@@ -14,4 +14,8 @@ public interface IUserService
   Task DeleteUser(string userId);
 
   Task VerifyUser(VerifyuserDTO verifyuserDTO);
+
+  Task RecoverAccount(RecoverAccountDTO recoverAccountDTO);
+
+  Task ChangePassword(ChangePasswordDTO changePasswordDTO);
 }

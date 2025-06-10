@@ -64,4 +64,18 @@ public class UserController(IUserService userService) : ControllerBase
     return Ok();
 
   }
+
+  [HttpPut("recoverAccount")]
+  public async Task<IActionResult> RecoverAccount(RecoverAccountDTO recoverAccountDTO)
+  {
+    await _userService.RecoverAccount(recoverAccountDTO);
+    return Ok();
+  }
+
+  [HttpPut("changePassword")]
+  public async Task<IActionResult> ChangePassword(ChangePasswordDTO changePasswordDTO)
+  {
+    await _userService.ChangePassword(changePasswordDTO);
+    return Ok();
+  }
 }
