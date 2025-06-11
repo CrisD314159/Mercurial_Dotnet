@@ -4,9 +4,10 @@ using MercurialBackendDotnet.Services.Interfaces;
 
 namespace MercurialBackendDotnet.Services.Implementations;
 
-public class PushNotificacionService(IHttpClientFactory httpClientFactory) : IPushNotificacionService
+public class PushNotificacionService(IHttpClientFactory httpClientFactory, IConfiguration configuration) : IPushNotificacionService
 {
   private readonly IHttpClientFactory _httpClient = httpClientFactory;
+  private readonly IConfiguration _configuration = configuration;
 
   public void ScheduleNotification(ScheduleNotificationDTO scheduleNotificationDTO)
   {
@@ -28,6 +29,8 @@ public class PushNotificacionService(IHttpClientFactory httpClientFactory) : IPu
       scheduleNotificationDTO.Link,
     };
 
-    await client.PostAsJsonAsync("https://localhost:3000/send-notification", payload);
+    var apiURL = $"{_configuration["Api:Url"]}/send-notification";
+
+    await client.PostAsJsonAsync(apiURL, payload);
   }
 }
