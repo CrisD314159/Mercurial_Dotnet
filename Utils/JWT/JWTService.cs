@@ -25,7 +25,7 @@ public static class JWTService{
       claims.Add(new(ClaimTypes.Authentication, sessionId));
     }
 
-    var jwtKey = generateRefresh ? configuration["Jwt:RefreshKey"]: configuration["Jwt:Key"];
+    var jwtKey = generateRefresh ? DotNetEnv.Env.GetString("JWT_REFRESH_KEY"): DotNetEnv.Env.GetString("JWT_KEY");
 
     if (string.IsNullOrEmpty(jwtKey))
     {
@@ -50,7 +50,7 @@ public static class JWTService{
   public static ClaimsPrincipal ExtractRefreshToken(string refreshToken, IConfiguration configuration, out SecurityToken securityToken)
   {
     var handler = new JwtSecurityTokenHandler();
-    var key = Encoding.UTF8.GetBytes(configuration["Jwt:RefreshKey"] ?? throw new VerificationException("Key not found"));
+    var key = Encoding.UTF8.GetBytes(DotNetEnv.Env.GetString("JWT_REFRESH_KEY") ?? throw new VerificationException("Key not found"));
 
     var validationParameters = new TokenValidationParameters()
     {
