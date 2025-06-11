@@ -17,7 +17,7 @@ namespace MercurialBackendDotnet.Services.Implementations;
 
 public class UserService(MercurialDBContext dBContext, IAccountService accountService
 , IValidator<CreateUserDTO> validator, IValidator<UpdateUserDTO> validatorUpdate, UserManager<User> userManager,
-SignInManager<User> signInManager
+SignInManager<User> signInManager, IValidator<ChangePasswordDTO> changePasswordValidations
 ) : IUserService
 {
   private readonly MercurialDBContext _dbContext = dBContext;
@@ -27,6 +27,7 @@ SignInManager<User> signInManager
   private readonly IValidator<CreateUserDTO> _validator = validator;
 
   private readonly IValidator<UpdateUserDTO> _validatorUpdate = validatorUpdate;
+  private readonly IValidator<ChangePasswordDTO> _changePasswordValidations = changePasswordValidations;
 
   private readonly UserManager<User> _userManager = userManager;
 
@@ -34,8 +35,11 @@ SignInManager<User> signInManager
 
   public async Task ChangePassword(ChangePasswordDTO changePasswordDTO)
   {
+    _changePasswordValidations.ValidateAndThrow(changePasswordDTO);
+
     var user = await _userManager.FindByEmailAsync(changePasswordDTO.Email)
     ?? throw new EntityNotFoundException("User not found");
+
 
     var result = await _userManager.ResetPasswordAsync(user, changePasswordDTO.Code, changePasswordDTO.Password);
 
@@ -157,15 +161,19 @@ SignInManager<User> signInManager
     var user = await _userManager.FindByEmailAsync(verifyuserDTO.Email)
     ?? throw new EntityNotFoundException("User does not exists");
 
-    if(await _userManager.IsEmailConfirmedAsync(user)) throw new VerificationException("User is already verified");
+    if (await _userManager.IsEmailConfirmedAsync(user)) throw new VerificationException("User is already verified");
 
-    if (user.Email != verifyuserDTO.Email || user.VerificationCode != verifyuserDTO.Code)
-    throw new VerificationException("Invalid code or email");
+    if (user.VerificationCode != verifyuserDTO.Code)
+      throw new VerificationException("Invalid code or email");
 
     user.EmailConfirmed = true;
     user.State = UserState.ACTIVE;
     user.VerificationCode = "0";
     user.LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
-    await _userManager.UpdateAsync(user);
+    var result = await _userManager.UpdateAsync(user);
+    if (!result.Succeeded)
+    {
+      throw new InternalServerException("An error occurred while trying to verify your account");
+    }
   }
 }

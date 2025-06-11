@@ -1,4 +1,4 @@
-@MercurialBackendDotnet_HostAddress = https://localhost:5066
+@MercurialBackendDotnet_HostAddress = http://localhost:5066
 @Token = 
 
 
@@ -64,7 +64,7 @@ Content-Type: application/json
 Authorization: Bearer {{Token}}
 
 {
-  "email":"vargasloaizacristian@gmail.com",
-  "code":"CfDJ8KteRa87mGJEkbxBb2VdhqWE1ggwY/3yuX5vtCnq0GBxFu24TX9JBhhx/PsfH326UJwhiMdTno0yG0nYH1K5J8R8dxEWrPN4fJCkacKG7910kBg58cN/wQ0B4+bSrXSnw39bFiYcKw0mVz43qL5cHWmj6topr3h+WkYlMwmRR5WIzmXzWJedDTmrVQt7nSdW5mB58S0Qu/x1CmVGO3TPwEhksEoM3io0stJhZPIRgHK/",
-  "password":"Paco-2025"
+  "email":"cristiandavidvargas717@gmail.com",
+  "code":"CfDJ8KteRa87mGJEkbxBb2VdhqWCUcO x8lTaJxK5kDCAJiouxMg6Tf0iGcWAbn/T3QfEt5akazm5KxozmI WpV2Sis1JUJ3JxkXNny4IjbxGMgTo3P7tqFKoPDsa2IFMTGyBx54fPUz7rq R64Kd918R6Tvp6S 1TQmrcNd0Cqr Gep4xfX0tTpY0rXHrGCzJhtqetro EoQoz8MmhswiJZuMVx1wwfxipsjPjICnmPyq6L",
+  "password":"Liliana-2025"
 }

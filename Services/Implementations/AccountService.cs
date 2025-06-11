@@ -59,14 +59,20 @@ UserManager<User> userManager, IConfiguration configuration) : IAccountService
 
     var result = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, false);
 
-    if(result.Succeeded && user.Email != null){
+    if (!result.Succeeded)
+    {
+      throw new VerificationException("Invalid email or password");
+    }
+
+    if (result.Succeeded && user.Email != null)
+    {
       var token = JWTService.GenerateToken(user.Id, user.Email, "", false, _configuration);
       var refreshToken = await GenerateSession(user.Id, user.Email);
 
       return new LoginResponseDTO(token, refreshToken);
     }
 
-    throw new VerificationException("Cannot Login");
+    throw new InternalServerException("Cannot Login");
   }
 
   public bool VerifyValidUser(UserState userState)
@@ -116,7 +122,8 @@ UserManager<User> userManager, IConfiguration configuration) : IAccountService
 
   public async Task SendRecoverAccountVerificationCode(string name, string email, string code)
   {
-    var link = $"https://mercurial-app.vercel.app/changePassword?changeToken={code}";
+    var encodedCode = Uri.EscapeDataString(code);
+    var link = $"https://mercurial-app.vercel.app/changePassword?changeToken={encodedCode}";
     await EmailUtil.ReadFileToSendEmail(name, "Recover your account", email, "Use this code to recover your account :)", link, "recoveryEmailTemplate");
   }
 

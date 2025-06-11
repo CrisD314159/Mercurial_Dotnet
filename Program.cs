@@ -22,7 +22,7 @@ builder.Services.AddCors(opt =>
     opt.AddPolicy(name: MercurialFrontend,
         policy =>
         {
-            policy.WithOrigins("https://localhost:3000")
+            policy.WithOrigins("https://localhost:3000","http://localhost:3000", "https://mercurial-app.vercel.app" )
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -108,6 +108,7 @@ builder.Services.AddScoped<IValidator<CreateTopicDTO>, TopicValidations>();
 builder.Services.AddScoped<IValidator<UpdateUserDTO>, UserUpdateValidations>();
 builder.Services.AddScoped<IValidator<AddNodeDTO>, NodeValidations>();
 builder.Services.AddScoped<IValidator<UpdateNodeDTO>, NodeUpdateValidations>();
+builder.Services.AddScoped<IValidator<ChangePasswordDTO>, PasswordChangeValidations>();
 
 builder.Services.AddControllers();
 
