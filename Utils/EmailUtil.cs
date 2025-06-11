@@ -49,7 +49,6 @@ public static class EmailUtil
       Subject = subject,
       HtmlBody = html,
     });
-    Console.WriteLine(resp.Content);
   }
   
 }

@@ -79,7 +79,7 @@ SignInManager<User> signInManager, IValidator<ChangePasswordDTO> changePasswordV
 
     var result = await _userManager.CreateAsync(user, createUserDTO.Password);
     if(!result.Succeeded){
-      throw new InternalServerException("Cannot create user");
+      throw new InternalServerException(string.Join(";", result.Errors.Select(e=>e.Description)));
     }
     await _accountService.SendAccountCreatedVerificationCode(createUserDTO.Name, createUserDTO.Email, user.VerificationCode);
 
@@ -93,10 +93,13 @@ SignInManager<User> signInManager, IValidator<ChangePasswordDTO> changePasswordV
   /// <exception cref="EntityNotFoundException"></exception>
   public async Task DeleteUser(string userId)
   {
-    var user = await _userManager.FindByIdAsync(userId) 
+    var user = await _userManager.FindByIdAsync(userId)
     ?? throw new EntityNotFoundException("User not found");
-    user.State = UserState.DELETED;
-    await _userManager.UpdateAsync(user);
+    var result = await _userManager.DeleteAsync(user);
+    if (!result.Succeeded)
+    {
+      throw new InternalServerException("An error occurred while trying to delete user");
+    }
   } 
 
   /// <summary>
@@ -123,7 +126,6 @@ SignInManager<User> signInManager, IValidator<ChangePasswordDTO> changePasswordV
     ?? throw new EntityNotFoundException("User does not exists");
 
     var recoveryCode = await _userManager.GeneratePasswordResetTokenAsync(user);
-    Console.WriteLine(recoveryCode);
 
     await _accountService.SendRecoverAccountVerificationCode(user.Name, recoverAccountDTO.Email, recoveryCode);
   }

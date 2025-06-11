@@ -45,6 +45,25 @@ public class MercurialDBContext: IdentityDbContext<User>
     // This allows EF Core to use cascade deletion for 1 to many relations
 
     base.OnModelCreating(modelBuilder);
+
+    modelBuilder.Entity<User>()
+    .HasMany(u => u.UserAssignments)
+    .WithOne(a => a.User)
+    .HasForeignKey(a => a.UserId)
+    .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<User>()
+    .HasMany(u => u.UserSubjects)
+    .WithOne(s => s.User)
+    .HasForeignKey(s => s.UserId)
+    .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<User>()
+    .HasMany(u => u.UserTopics)
+    .WithOne(t => t.User)
+    .HasForeignKey(t => t.UserId)
+    .OnDelete(DeleteBehavior.Cascade);
+
     modelBuilder.Entity<Assignment>()
     .HasOne(a => a.Note)
     .WithOne(n => n.Assignment)
