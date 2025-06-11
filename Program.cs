@@ -16,7 +16,6 @@ using Hangfire;
 using Hangfire.PostgreSql;
 
 var builder = WebApplication.CreateBuilder(args);
-DotNetEnv.Env.Load();
 
 var MercurialFrontend = "mercurialFrontend";
 builder.Services.AddCors(opt =>
@@ -35,7 +34,7 @@ builder.Services.AddCors(opt =>
 // en la app de nextjs
 builder.Services.AddHangfire(config =>
     config.UsePostgreSqlStorage(c =>
-        c.UseNpgsqlConnection(DotNetEnv.Env.GetString("DB_STRING"))
+        c.UseNpgsqlConnection(builder.Configuration["ConnectionStrings:DBConnection"])
     )
 );
 
@@ -61,7 +60,7 @@ builder.Services.AddAuthentication( options=>
         ValidateIssuerSigningKey = true,
         ValidIssuer = config["Jwt:Issuer"],
         ValidAudience = config["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(DotNetEnv.Env.GetString("JWT_KEY")
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"] 
         ?? throw new InvalidOperationException("Jwt:Key is not configured")))
     };
 });
@@ -72,7 +71,7 @@ builder.Services.AddAuthorization();
 // Add services to the container.
 // Para añadir la base de datos postgres al contexto de la aplicación
 builder.Services.AddDbContext<MercurialDBContext> (o =>
-    o.UseNpgsql(DotNetEnv.Env.GetString("DB_STRING"))
+    o.UseNpgsql(builder.Configuration["ConnectionStrings:DBConnection"])
 );
 
 /// Used to add the identity framework core
@@ -145,6 +144,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-
+DotNetEnv.Env.Load();
 
 app.Run();

@@ -1,4 +1,4 @@
-@MercurialBackendDotnet_HostAddress = http://localhost:5066
+@MercurialBackendDotnet_HostAddress = http://localhost:8000
 @Token = 
 
 
@@ -55,7 +55,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "email":"dkfpdkf;sdkfsdflk@gmail.com"
+  "email":"davidclaff4@gmail.com"
 }
 ### RecoverAccount
 PUT  {{MercurialBackendDotnet_HostAddress}}/user/changePassword

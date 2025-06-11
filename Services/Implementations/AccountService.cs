@@ -117,14 +117,14 @@ UserManager<User> userManager, IConfiguration configuration) : IAccountService
   public async Task SendAccountCreatedVerificationCode(string name, string email, string code)
   {
     await EmailUtil.ReadFileToSendEmail(name, "Verify your email", email, "Thanks for sign up to Mercurial, use this code to verify your account", 
-    code, "emailTemplate");
+    code, "emailTemplate", _configuration);
   }
 
   public async Task SendRecoverAccountVerificationCode(string name, string email, string code)
   {
     var encodedCode = Uri.EscapeDataString(code);
     var link = $"https://mercurial-app.vercel.app/changePassword?changeToken={encodedCode}";
-    await EmailUtil.ReadFileToSendEmail(name, "Recover your account", email, "Use this code to recover your account :)", link, "recoveryEmailTemplate");
+    await EmailUtil.ReadFileToSendEmail(name, "Recover your account", email, "Use this code to recover your account :)", link, "recoveryEmailTemplate", _configuration);
   }
 
 

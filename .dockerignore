@@ -6,3 +6,4 @@ Dockerfile
 README.md
 HttpTests/
 .env
+appsettings.json
