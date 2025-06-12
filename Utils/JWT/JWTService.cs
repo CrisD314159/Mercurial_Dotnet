@@ -77,9 +77,8 @@ public static class JWTService{
     {
       throw new UnauthorizedException("Expired session");
     }
-    catch(SecurityTokenException error)
+    catch(SecurityTokenException)
     {
-      Console.WriteLine(error.Message);
       throw new UnauthorizedException("Token not allowed");
     }
     
