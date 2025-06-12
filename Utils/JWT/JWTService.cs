@@ -54,8 +54,8 @@ public static class JWTService{
 
     var validationParameters = new TokenValidationParameters()
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
+        ValidateIssuer = false,
+        ValidateAudience = false,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(key),
@@ -77,8 +77,9 @@ public static class JWTService{
     {
       throw new UnauthorizedException("Expired session");
     }
-    catch(SecurityTokenException)
+    catch(SecurityTokenException error)
     {
+      Console.WriteLine(error.Message);
       throw new UnauthorizedException("Token not allowed");
     }
     
