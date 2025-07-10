@@ -50,6 +50,8 @@ SignInManager<User> signInManager, IValidator<ChangePasswordDTO> changePasswordV
 
   }
 
+
+
   /// <summary>
   /// Creates a new user
   /// </summary>
@@ -64,16 +66,20 @@ SignInManager<User> signInManager, IValidator<ChangePasswordDTO> changePasswordV
 
     _validator.ValidateAndThrow(createUserDTO);
 
-    User user = new (){
-      Id= Guid.NewGuid().ToString(),
+    var cleanName = createUserDTO.Name.Trim().Replace(" ", "");
+
+    User user = new()
+    {
+      Id = Guid.NewGuid().ToString(),
       Name = createUserDTO.Name,
       State = UserState.NOT_VERIFIED,
       ProfilePicture = $"https://api.dicebear.com/9.x/thumbs/svg?seed={createUserDTO.Name}",
       LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
       VerificationCode = new Random().Next(1000, 9999).ToString(),
-      UserName = createUserDTO.Name.Trim(),
+      UserName = cleanName,
       Email = createUserDTO.Email,
-      EmailConfirmed = false
+      EmailConfirmed = false,
+      IsThirdPartyUser = false
     };
 
 
@@ -124,6 +130,8 @@ SignInManager<User> signInManager, IValidator<ChangePasswordDTO> changePasswordV
   {
     var user = await _userManager.FindByEmailAsync(recoverAccountDTO.Email)
     ?? throw new EntityNotFoundException("User does not exists");
+    
+    if (user.IsThirdPartyUser) throw new VerificationException("Use your Google account to log in");
 
     var recoveryCode = await _userManager.GeneratePasswordResetTokenAsync(user);
 

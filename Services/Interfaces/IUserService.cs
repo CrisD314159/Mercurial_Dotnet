@@ -18,4 +18,5 @@ public interface IUserService
   Task RecoverAccount(RecoverAccountDTO recoverAccountDTO);
 
   Task ChangePassword(ChangePasswordDTO changePasswordDTO);
+
 }

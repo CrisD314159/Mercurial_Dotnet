@@ -16,5 +16,7 @@ public interface IAccountService
 
   Task SendRecoverAccountVerificationCode(string name, string email, string code);
 
+  Task<LoginResponseDTO> SignInUsingGoogle(string email, string name);
+
   
 }

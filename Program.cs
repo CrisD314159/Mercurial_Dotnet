@@ -45,11 +45,19 @@ builder.Services.AddHangfireServer();
 builder.Services.AddHttpClient();
 
 // Para añadir autenticación mediante JWT usando Identity
-builder.Services.AddAuthentication( options=>
+builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme =  JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme =  JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(googleOptions =>
+{
+    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? "";
+    googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "";
+    googleOptions.CallbackPath = "/signin-google";
+})
+.AddJwtBearer(options =>
 {
    var config = builder.Configuration;
     options.TokenValidationParameters = new TokenValidationParameters
@@ -94,6 +102,7 @@ builder.Services.AddScoped<IAssignmentService, AssignmentService>();
 builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPushNotificacionService, PushNotificacionService>();
+builder.Services.AddScoped<IThirdPartyAccountService, ThirdPartyAccountService>();
 
 // Adding validations 
 // Añade las validaciones de fluent validation

@@ -20,8 +20,10 @@ public class User : IdentityUser
   public required DateOnly LastUpdatedAt {get; set;}
 
   public required string VerificationCode {get; set;}
+  
+  public required bool IsThirdPartyUser { get; set; }
 
-  public ICollection<Topic> UserTopics {get; set;} = []; 
+  public ICollection<Topic> UserTopics { get; set; } = []; 
 
   public ICollection<Subject> UserSubjects {get; set;} = []; 
 

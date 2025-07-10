@@ -14,12 +14,13 @@ using Microsoft.EntityFrameworkCore;
 namespace MercurialBackendDotnet.Services.Implementations;
 
 public class AccountService(MercurialDBContext dbContext, SignInManager<User> signInManager,
-UserManager<User> userManager, IConfiguration configuration) : IAccountService
+UserManager<User> userManager, IConfiguration configuration, IThirdPartyAccountService thirdPartyAccountService) : IAccountService
 {
   private readonly MercurialDBContext _dbContext = dbContext;
   private readonly SignInManager<User> _signInManager = signInManager;
   private readonly UserManager<User> _userManager = userManager;
   private readonly IConfiguration _configuration = configuration;
+  private readonly IThirdPartyAccountService _thirdPartyAccountService = thirdPartyAccountService;
 
   public async Task<RefreshTokenResponseDTO> RefreshToken(string refreshToken)
   {
@@ -36,7 +37,7 @@ UserManager<User> userManager, IConfiguration configuration) : IAccountService
     var email = claims.FindFirst(ClaimTypes.Email)?.Value.ToString()
     ?? throw new EntityNotFoundException("Claim not found");
 
-    if(session.ExpiresAt < DateOnly.FromDateTime(DateTime.UtcNow)) throw new UnauthorizedException("Expired session");
+    if (session.ExpiresAt < DateOnly.FromDateTime(DateTime.UtcNow)) throw new UnauthorizedException("Expired session");
 
     var token = JWTService.GenerateToken(userId, email, "", false, _configuration);
 
@@ -54,6 +55,8 @@ UserManager<User> userManager, IConfiguration configuration) : IAccountService
   {
     var user = await _userManager.FindByEmailAsync(loginDTO.Email) 
     ?? throw new EntityNotFoundException("User not found");
+
+    if (user.IsThirdPartyUser) throw new VerificationException("Use your Google account to log in");
    
     VerifyValidUser(user.State); // Verifies the user state
 
@@ -75,10 +78,35 @@ UserManager<User> userManager, IConfiguration configuration) : IAccountService
     throw new InternalServerException("Cannot Login");
   }
 
+  public async Task<LoginResponseDTO> SignInUsingGoogle(string email, string name)
+  {
+    var user = await _userManager.FindByEmailAsync(email);
+
+    if (user == null )
+    {
+      var newUser = await _thirdPartyAccountService.CreateThirdPartyUser(email, name);
+      return await GenerateThirdPartyTokenAndSession(newUser.Id, newUser.Email ?? "");
+    }
+
+    return await GenerateThirdPartyTokenAndSession(user.Id, user.Email!);
+
+  }
+
+
+  private async Task<LoginResponseDTO> GenerateThirdPartyTokenAndSession(string id, string email)
+  {
+    if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(email)) throw new VerificationException("id or email not provided");
+
+    var token = JWTService.GenerateToken(id, email, "", false, _configuration);
+    var refreshToken = await GenerateSession(id, email);
+
+    return new LoginResponseDTO(token, refreshToken);
+  }
+
   public bool VerifyValidUser(UserState userState)
   {
-    if(userState == UserState.DELETED) throw new EntityNotFoundException("User Not found");
-    if(userState == UserState.NOT_VERIFIED) throw new UnauthorizedException("You're not verified yet");
+    if (userState == UserState.DELETED) throw new EntityNotFoundException("User Not found");
+    if (userState == UserState.NOT_VERIFIED) throw new UnauthorizedException("You're not verified yet");
     return true;
   }
 
