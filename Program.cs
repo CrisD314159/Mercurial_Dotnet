@@ -103,14 +103,13 @@ builder.Services.AddControllers(options =>
     options.Filters.Add<GlobalExceptionFilter>();
 });
 
+// Para redireccion de cabeceras con el objetivo de hacer
+// peticiones externas con https como a google oauth
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
     options.KnownNetworks.Clear();
     options.KnownProxies.Clear();
-
-    // Cloud Run usa proxies de Google, por seguridad podrías agregar rangos conocidos
-    // pero para Cloud Run generalmente es seguro dejarlo así
     options.RequireHeaderSymmetry = false;
 });
 

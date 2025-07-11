@@ -78,11 +78,18 @@ UserManager<User> userManager, IConfiguration configuration, IThirdPartyAccountS
     throw new InternalServerException("Cannot Login");
   }
 
+  /// <summary>
+  /// Logs in a user using google Oauth provider
+  /// If the user is already on the database, just returns JWT for access and session 
+  /// </summary>
+  /// <param name="email"></param>
+  /// <param name="name"></param>
+  /// <returns></returns>
   public async Task<LoginResponseDTO> SignInUsingGoogle(string email, string name)
   {
     var user = await _userManager.FindByEmailAsync(email);
 
-    if (user == null )
+    if (user == null)
     {
       var newUser = await _thirdPartyAccountService.CreateThirdPartyUser(email, name);
       return await GenerateThirdPartyTokenAndSession(newUser.Id, newUser.Email ?? "");
