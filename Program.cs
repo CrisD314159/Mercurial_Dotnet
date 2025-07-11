@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Hangfire;
 using Hangfire.PostgreSql;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,34 +45,7 @@ builder.Services.AddHangfireServer();
 // En este caso, para hacer peticiones a firebase para las notificaciones push
 builder.Services.AddHttpClient();
 
-// Para añadir autenticación mediante JWT usando Identity
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddCookie()
-.AddGoogle(googleOptions =>
-{
-    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? "";
-    googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "";
-    googleOptions.CallbackPath = "/signin-google";
-})
-.AddJwtBearer(options =>
-{
-   var config = builder.Configuration;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = config["Jwt:Issuer"],
-        ValidAudience = config["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"] 
-        ?? throw new InvalidOperationException("Jwt:Key is not configured")))
-    };
-});
+
 
 // Añade autorización 
 builder.Services.AddAuthorization();
@@ -124,8 +98,49 @@ builder.Services.AddControllers();
 // Esto inyecta una clase que es un manejador de excepciones
 // El manejador de exepciones recibe toda excepción de la app y la filtra 
 // con el objetivo de devolver la respuesta adaptada a la excepción
-builder.Services.AddControllers(options =>{
+builder.Services.AddControllers(options =>
+{
     options.Filters.Add<GlobalExceptionFilter>();
+});
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+
+    // Cloud Run usa proxies de Google, por seguridad podrías agregar rangos conocidos
+    // pero para Cloud Run generalmente es seguro dejarlo así
+    options.RequireHeaderSymmetry = false;
+});
+
+// Para añadir autenticación mediante JWT usando Identity
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(googleOptions =>
+{
+    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? "";
+    googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "";
+    googleOptions.CallbackPath = "/signin-google";
+})
+.AddJwtBearer(options =>
+{
+   var config = builder.Configuration;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = config["Jwt:Issuer"],
+        ValidAudience = config["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"] 
+        ?? throw new InvalidOperationException("Jwt:Key is not configured")))
+    };
 });
 
 
@@ -143,6 +158,8 @@ if (app.Environment.IsDevelopment())
 }
 
 // Middlewares para los servicios anteriores
+
+app.UseForwardedHeaders();
 
 app.UseHangfireDashboard();
 
