@@ -7,6 +7,8 @@ public interface ISessionsRepository
 {
   Task<List<Session>> GetUserSessionsAsync(string userId);
   Task<List<Session>> GetUserOldSessionsAsync(string userId);
+  Task<Session> GetSessionByIdAsync(string sessionId);
+  Task RemoveSingleSessionAsync(Session session);
 
   Task RemoveSeveralSessionsAsync(List<Session> sessions);
 
