@@ -12,7 +12,7 @@ public interface IAssignmentRepository
 
   Task UpdateAssingmentAsync(Assignment assignment);
 
-  Task<Assignment> GetAssignmentByIdAync(string assignmentId);
+  Task<Assignment> GetAssignmentByIdAync(Guid assignmentId);
 
   Task<bool> UserHasExeededMaximumAssignments(string userId);
   Task<Assignment> GetAssignmentByAssignmentNameUserIdAndState(string name, string userId, AssignmentState assignmentState);

@@ -2,16 +2,26 @@ namespace MercurialBackendDotnet.Domain.Entities;
 
 public class CheckList
 {
-  public long Id {set; get;}
-  
-  public ICollection<CheckListItem> CheckListItems {get; set;} = [];
+  public long Id { set; get; }
 
-  public Guid AssignmentId {set; get;}
+  public ICollection<CheckListItem> CheckListItems { get; set; } = [];
 
-  public required Assignment Assignment {set; get;} 
+  public Guid AssignmentId { set; get; }
 
-  public DateOnly CreatedAt {set; get;} =  DateOnly.FromDateTime(DateTime.UtcNow);
+  public required Assignment Assignment { set; get; }
 
-  public required DateOnly LastUpdatedAt {set; get;}
+  public DateOnly CreatedAt { set; get; } = DateOnly.FromDateTime(DateTime.UtcNow);
+
+  public required DateOnly LastUpdatedAt { set; get; }
+
+
+  public bool ChecklistExceededLimit()
+  {
+    if (this.CheckListItems.Count > 14)
+    {
+      return true;
+    }
+    return false;
+  }
 
 }
