@@ -1,37 +1,57 @@
+using MercurialBackendDotnet.DB;
+using MercurialBackendDotnet.Domain.DomainExceptions;
 using MercurialBackendDotnet.Domain.Entities;
 using MercurialBackendDotnet.Domain.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MercurialBackendDotnet.Infrastructure.RepositoriesImpl;
 
-public class SessionsRepositoryImpl:ISessionsRepository
+public class SessionsRepositoryImpl(MercurialDBContext mercurialDBContext):ISessionsRepository
 {
-    public Task<List<Session>> GetUserSessionsAsync(string userId)
+    private readonly MercurialDBContext _dbContext = mercurialDBContext;
+
+    public async Task<List<Session>> GetUserSessionsAsync(string userId)
     {
-        throw new NotImplementedException();
+        var userSessions = await _dbContext.Sessions
+        .Where(s => s.UserId == userId)
+        .ToListAsync();
+
+        return userSessions;
     }
 
-    public Task<List<Session>> GetUserOldSessionsAsync(string userId)
+    public async Task<List<Session>> GetUserOldSessionsAsync(string userId)
     {
-        throw new NotImplementedException();
+        var userOldSessions = await _dbContext.Sessions
+        .Where(s => s.UserId == userId && s.SignedAt <= DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-5)))
+        .ToListAsync();
+
+        return userOldSessions;
     }
 
-    public Task<Session> GetSessionByIdAsync(string sessionId)
+    public async Task<Session> GetSessionByIdAsync(string sessionId)
     {
-        throw new NotImplementedException();
+        var session = await _dbContext.Sessions.FindAsync(sessionId)
+        ?? throw new EntityNotFoundException("Session not found");
+
+        return session;
     }
 
-    public Task RemoveSingleSessionAsync(Session session)
+    public async Task RemoveSingleSessionAsync(Session session)
     {
-        throw new NotImplementedException();
+        _dbContext.Sessions.Remove(session);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task RemoveSeveralSessionsAsync(List<Session> sessions)
+    public async Task RemoveSeveralSessionsAsync(List<Session> sessions)
     {
-        throw new NotImplementedException();
+        _dbContext.Sessions.RemoveRange(sessions);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task CreateSession(Session session)
+    public async Task CreateSession(Session session)
     {
-        throw new NotImplementedException();
+        await _dbContext.Sessions.AddAsync(session);
+        await _dbContext.SaveChangesAsync();
     }
 }

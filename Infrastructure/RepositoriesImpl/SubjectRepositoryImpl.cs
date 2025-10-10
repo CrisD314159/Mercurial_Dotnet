@@ -1,49 +1,79 @@
+using MercurialBackendDotnet.DB;
+using MercurialBackendDotnet.Domain.DomainExceptions;
 using MercurialBackendDotnet.Domain.Entities;
 using MercurialBackendDotnet.Domain.Interfaces;
 using MercurialBackendDotnet.Presentation.Dto.OutputDTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace MercurialBackendDotnet.Infrastructure.RepositoriesImpl;
 
 
-public class SubjectRepositoryImpl:ISubjectRepository
+public class SubjectRepositoryImpl(MercurialDBContext mercurialDBContext):ISubjectRepository
 {
-    public Task CreateSubjectAsync(Subject subject)
+
+    private readonly MercurialDBContext _dbContext = mercurialDBContext;
+
+    public async Task CreateSubjectAsync(Subject subject)
     {
-        throw new NotImplementedException();
+        await _dbContext.Subjects.AddAsync(subject);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task DeleteSubjectAsync(Subject subject)
+    public async Task DeleteSubjectAsync(Subject subject)
     {
-        throw new NotImplementedException();
+        _dbContext.Subjects.Remove(subject);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task UpdateSubjectAsync(Subject subject)
+    public async Task UpdateSubjectAsync(Subject subject)
     {
-        throw new NotImplementedException();
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task<Subject> GetSubjectByIdAync(string subjectId)
+    public async Task<Subject> GetSubjectByIdAync(string subjectId)
     {
-        throw new NotImplementedException();
+        var subject = await _dbContext.Subjects.FindAsync(subjectId)
+        ?? throw new EntityNotFoundException("Subject not found");
+        return subject;
     }
 
-    public Task<bool> UserHasExceededSubjectsLimit(string userId)
+    public async Task<bool> UserHasExceededSubjectsLimit(string userId)
     {
-        throw new NotImplementedException();
+        var userSubjects = await _dbContext.Subjects
+        .Where(s => s.UserId == userId)
+        .CountAsync();
+
+        return userSubjects >= 15;
     }
 
-    public Task<Subject> GetSubjectBySubjectNameAndUserId(string subjectName, string userId)
+    public async Task<Subject> GetSubjectBySubjectNameAndUserId(string subjectName, string userId)
     {
-        throw new NotImplementedException();
+        var subject = await _dbContext.Subjects
+        .Where(s => s.Name == subjectName && s.UserId == userId)
+        .FirstOrDefaultAsync() ?? throw new EntityNotFoundException("Subject not found");
+
+        return subject;
+
     }
 
-    public Task<Subject> GetSubjectBySubjectIdAndUserId(long subjectId, string userId)
+    public async Task<Subject> GetSubjectBySubjectIdAndUserId(long subjectId, string userId)
     {
-        throw new NotImplementedException();
+        var subject = await _dbContext.Subjects
+        .Where(s => s.Id == subjectId && s.UserId == userId)
+        .FirstOrDefaultAsync() ?? throw new EntityNotFoundException("Subject not found");
+
+        return subject;
     }
 
-    public Task<List<SubjectDTO>> GetUserSubjectsAsync(string userId, int offset, int limit)
+    public async Task<List<SubjectDTO>> GetUserSubjectsAsync(string userId, int offset, int limit)
     {
-        throw new NotImplementedException();
+        var userSubjects = await _dbContext.Subjects
+        .Where(s => s.UserId == userId)
+        .Select(s => new SubjectDTO(s.Id, s.Name, s.LastUpdatedAt))
+        .Skip(offset)
+        .Take(limit)
+        .ToListAsync();
+
+        return userSubjects;
     }
 }
