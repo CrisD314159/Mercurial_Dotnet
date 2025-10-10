@@ -39,9 +39,9 @@ public class AssignmentRepositoryImpl(MercurialDBContext dbContext): IAssignment
 
     public async Task<bool> UserHasExeededMaximumAssignments(string userId)
     {
-        var userAssignments = await _dbContext.Assignments.Where(a => a.UserId == userId).ToListAsync();
+        var userAssignments = await _dbContext.Assignments.Where(a => a.UserId == userId).CountAsync();
 
-        return userAssignments.Count() >= 15;
+        return userAssignments >= 100;
     }
 
     public async Task<Assignment> GetAssignmentByAssignmentNameUserIdAndState(string name, string userId, AssignmentState assignmentState)

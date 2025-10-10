@@ -1,48 +1,75 @@
+using MercurialBackendDotnet.DB;
+using MercurialBackendDotnet.Domain.DomainExceptions;
 using MercurialBackendDotnet.Domain.Entities;
 using MercurialBackendDotnet.Domain.Interfaces;
 using MercurialBackendDotnet.Presentation.Dto.OutputDTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace MercurialBackendDotnet.Infrastructure.RepositoriesImpl;
 
-public class TopicRepositoryImpl:ITopicRepository
+public class TopicRepositoryImpl(MercurialDBContext mercurialDBContext):ITopicRepository
 {
-    public Task CreateTopicAsync(Topic topic)
+    private readonly MercurialDBContext _dbContext = mercurialDBContext;
+
+    public async Task CreateTopicAsync(Topic topic)
     {
-        throw new NotImplementedException();
+        await _dbContext.Topics.AddAsync(topic);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task DeleteTopicAsync(Topic topic)
+    public async Task DeleteTopicAsync(Topic topic)
     {
-        throw new NotImplementedException();
+        _dbContext.Topics.Remove(topic);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task UpdateTopicAsync(Topic topic)
+    public async Task UpdateTopicAsync(Topic topic)
     {
-        throw new NotImplementedException();
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task<Topic> GetTopicByIdAsync(string topicId)
+    public async Task<Topic> GetTopicByIdAsync(string topicId)
     {
-        throw new NotImplementedException();
+        var topic = await _dbContext.Topics.FindAsync(topicId)
+            ?? throw new EntityNotFoundException("Topic not found");
+        return topic;
     }
 
-    public Task<List<TopicDTO>> GetUserTopicsAsync(string userId, int offset, int limit)
+    public async Task<List<TopicDTO>> GetUserTopicsAsync(string userId, int offset, int limit)
     {
-        throw new NotImplementedException();
+        var userTopics = await _dbContext.Topics
+        .Where(t => t.UserId == userId)
+        .Select(t => new TopicDTO(t.Id, t.Title, t.Color, t.LastUpdatedAt))
+        .Skip(offset)
+        .Take(limit)
+        .ToListAsync();
+
+        return userTopics;
     }
 
-    public Task<bool> UserHasExceededTopicLimit(string userId)
+    public async Task<bool> UserHasExceededTopicLimit(string userId)
     {
-        throw new NotImplementedException();
+        var userTopics = await _dbContext.Topics
+            .Where(t => t.UserId == userId).CountAsync();
+
+        return userTopics >= 15;
     }
 
-    public Task<Topic> GetTopicByIdAndUserId(long topicId, string userId)
+    public async Task<Topic> GetTopicByIdAndUserId(long topicId, string userId)
     {
-        throw new NotImplementedException();
+        var topic = await _dbContext.Topics
+        .Where(t => t.Id == topicId && t.UserId == userId)
+        .FirstOrDefaultAsync() ?? throw new EntityNotFoundException("Topic not found");
+
+        return topic;
     }
 
-    public Task<Topic> GetTopicByTopicNameAndUserId(string topicName, string userId)
+    public async Task<Topic> GetTopicByTopicNameAndUserId(string topicName, string userId)
     {
-        throw new NotImplementedException();
+        var topic = await _dbContext.Topics
+        .Where(t => t.Title == topicName && t.UserId == userId)
+        .FirstOrDefaultAsync() ?? throw new EntityNotFoundException("Topic not found");
+
+        return topic;
     }
 }
