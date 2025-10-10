@@ -2,7 +2,7 @@ using System.Security;
 using MercurialBackendDotnet.Application.ApplicationExceptions;
 using MercurialBackendDotnet.Domain.Interfaces;
 
-namespace MercurialBackendDotnet.Application.UseCases.AssignmentCases;
+namespace MercurialBackendDotnet.Application.ApplicationServices;
 
 
 public class VerifyValidAssignmentService(IAssignmentRepository assignmentRepository)

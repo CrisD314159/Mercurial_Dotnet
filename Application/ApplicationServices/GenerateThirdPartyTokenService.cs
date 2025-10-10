@@ -5,10 +5,10 @@ using MercurialBackendDotnet.Presentation.Dto.OutputDTO;
 namespace MercurialBackendDotnet.Application.ApplicationServices;
 
 
-public class GenerateThirdPartyTokenService(IJWTService jwtService, GenerateSessionService generateSessionService)
+public class GenerateThirdPartyTokenService(IjwtService jwtService, GenerateSessionService generateSessionService)
 {
 
-  private readonly IJWTService _jwtService = jwtService;
+  private readonly IjwtService _jwtService = jwtService;
   private readonly GenerateSessionService _generateSessionService = generateSessionService;
 
   public async Task<LoginResponseDTO> Execute(string id, string email)

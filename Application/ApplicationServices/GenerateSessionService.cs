@@ -11,11 +11,11 @@ namespace MercurialBackendDotnet.Application.ApplicationServices;
 public class GenerateSessionService(
   UserManager<User> userManager,
   ISessionsRepository sessionsRepository,
-  IJWTService jwtService)
+  IjwtService jwtService)
 {
   private readonly UserManager<User> _userManager = userManager;
   private readonly ISessionsRepository _sessionRepository = sessionsRepository;
-  private readonly IJWTService _jwtService = jwtService;
+  private readonly IjwtService _jwtService = jwtService;
   
   public async Task<string> CreateSession(string userId, string email)
   {

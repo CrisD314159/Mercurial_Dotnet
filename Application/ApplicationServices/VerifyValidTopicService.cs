@@ -2,7 +2,6 @@ using MercurialBackendDotnet.Application.ApplicationExceptions;
 using MercurialBackendDotnet.Domain.DomainExceptions;
 using MercurialBackendDotnet.Domain.Entities;
 using MercurialBackendDotnet.Domain.Interfaces;
-using MercurialBackendDotnet.Services.Interfaces;
 
 namespace MercurialBackendDotnet.Application.ApplicationServices;
 

@@ -1,6 +1,5 @@
 using FluentValidation;
-using MercurialBackendDotnet.Dto.InputDTO;
-using MercurialBackendDotnet.Model;
+using MercurialBackendDotnet.Presentation.Dto.InputDTO;
 
 namespace MercurialBackendDotnet.Validations;
 

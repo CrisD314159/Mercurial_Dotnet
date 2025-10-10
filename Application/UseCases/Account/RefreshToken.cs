@@ -8,10 +8,10 @@ using MercurialBackendDotnet.Presentation.Dto.OutputDTO;
 namespace MercurialBackendDotnet.Application.UseCases.Account;
 
 
-public class RefreshToken (IJWTService jwtService, ISessionsRepository sessionsRepository)
+public class RefreshToken (IjwtService jwtService, ISessionsRepository sessionsRepository)
 {
 
-  private readonly IJWTService _jwtService = jwtService;
+  private readonly IjwtService _jwtService = jwtService;
   private readonly ISessionsRepository _sessionsRepository = sessionsRepository;
 
   public async Task<RefreshTokenResponseDTO> Execute(string refreshToken)

@@ -1,12 +1,6 @@
 using System.Text;
 using FluentValidation;
 using MercurialBackendDotnet.DB;
-using MercurialBackendDotnet.Dto.InputDTO;
-using MercurialBackendDotnet.Dto.OutputDTO;
-using MercurialBackendDotnet.Exceptions.ExceptionsFilters;
-using MercurialBackendDotnet.Model;
-using MercurialBackendDotnet.Services.Implementations;
-using MercurialBackendDotnet.Services.Interfaces;
 using MercurialBackendDotnet.Validations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -15,6 +9,11 @@ using Microsoft.IdentityModel.Tokens;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.HttpOverrides;
+using MercurialBackendDotnet.Domain.Model;
+using MercurialBackendDotnet.Presentation.Dto.InputDTO;
+using MercurialBackendDotnet.Application.Validations;
+using MercurialBackendDotnet.Presentation.GlobalExceptionFilters;
+using MercurialBackendDotnet.Application.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,14 +68,12 @@ builder.Services.AddIdentity<User, IdentityRole<string>>(options =>
 
 
 //Services injection
-builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<ICheckListService, CheckListService>();
-builder.Services.AddScoped<ISubjectService, SubjectService>();
-builder.Services.AddScoped<IAssignmentService, AssignmentService>();
-builder.Services.AddScoped<ITopicService, TopicService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IPushNotificacionService, PushNotificacionService>();
-builder.Services.AddScoped<IThirdPartyAccountService, ThirdPartyAccountService>();
+builder.Services.Scan(selector => selector
+    .FromAssemblies(typeof(ApplicationServiceRegistration).Assembly)
+    .AddClasses(classes => classes.Where(c => c.Name.EndsWith("UseCase")))
+    .AsImplementedInterfaces()
+    .WithScopedLifetime()
+);
 
 // Adding validations 
 // Añade las validaciones de fluent validation

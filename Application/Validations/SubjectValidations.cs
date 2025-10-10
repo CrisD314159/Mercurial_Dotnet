@@ -1,8 +1,7 @@
 using FluentValidation;
-using MercurialBackendDotnet.Dto.InputDTO;
+using MercurialBackendDotnet.Presentation.Dto.InputDTO;
 
-namespace MercurialBackendDotnet.Validations;
-
+namespace MercurialBackendDotnet.Application.Validations;
 public class SubjectValidations : AbstractValidator<CreateSubjectDTO>
 {
   public SubjectValidations()

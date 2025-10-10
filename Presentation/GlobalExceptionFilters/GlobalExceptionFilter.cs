@@ -1,8 +1,10 @@
 using FluentValidation;
+using MercurialBackendDotnet.Application.ApplicationExceptions;
+using MercurialBackendDotnet.Domain.DomainExceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace MercurialBackendDotnet.Domain.Exceptions.ExceptionsFilters;
+namespace MercurialBackendDotnet.Presentation.GlobalExceptionFilters;
 
 public class GlobalExceptionFilter : IExceptionFilter
 {
@@ -17,7 +19,7 @@ public class GlobalExceptionFilter : IExceptionFilter
         { typeof(ValidationException), StatusCodes.Status400BadRequest },
         { typeof(EntityAlreadyExistsException), StatusCodes.Status400BadRequest },
         { typeof(ExceededLimitException), StatusCodes.Status409Conflict },
-        { typeof(VerificationException), StatusCodes.Status400BadRequest},
+        { typeof(EntityValidationException), StatusCodes.Status400BadRequest},
         { typeof(InternalServerException), StatusCodes.Status500InternalServerError}
     };
 
