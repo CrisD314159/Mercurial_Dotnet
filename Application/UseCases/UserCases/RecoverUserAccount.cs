@@ -12,8 +12,8 @@ public class RecoverUserAccount(UserManager<User> userManager, IEmailService ema
 {
 
   private readonly UserManager<User> _userManager = userManager;
-
   private readonly IEmailService _emailService = emailService;
+  
   public async Task Execute(RecoverAccountDTO recoverAccountDTO)
   {
     var user = await _userManager.FindByEmailAsync(recoverAccountDTO.Email)

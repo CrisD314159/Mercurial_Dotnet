@@ -33,10 +33,8 @@ public async Task Execute(string userId, UpdateAssignmentDTO updateAssignmentDTO
       var topic = await _topicRepository.GetTopicByIdAndUserId(updateAssignmentDTO.TopicId, userId);
       assignment.Topic = topic;
     }
-    if (assignment.Note != null)
-    {
-        assignment.Note.Content = updateAssignmentDTO.NoteContent;
-    }
+
+    assignment.Note.Content = updateAssignmentDTO.NoteContent;
     assignment.DueDate = updateAssignmentDTO.DueDate;
     assignment.Title = updateAssignmentDTO.Title;
     assignment.LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);

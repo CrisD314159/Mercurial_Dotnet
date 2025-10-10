@@ -24,7 +24,7 @@ IEmailService emailService)
     if (await _userManager.FindByEmailAsync(createUserDTO.Email) != null)
       throw new EntityAlreadyExistsException("User already exists");
 
-    _validator.ValidateAndThrow(createUserDTO);
+    await _validator.ValidateAndThrowAsync(createUserDTO);
 
     var cleanName = createUserDTO.Name.Trim().Replace(" ", "");
 

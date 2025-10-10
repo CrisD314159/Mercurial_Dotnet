@@ -15,7 +15,7 @@ public class UpdateUser(UserManager<User> userManager, IValidator<UpdateUserDTO>
   private readonly IValidator<UpdateUserDTO> _validator = validator;
   public async Task Execute(string id, UpdateUserDTO updateUserDTO)
   {
-    _validator.ValidateAndThrow(updateUserDTO);
+    await _validator.ValidateAndThrowAsync(updateUserDTO);
     var user = await _userManager.FindByIdAsync(id) ?? throw new EntityNotFoundException("User does not exist");
 
     user.Name = updateUserDTO.Name;

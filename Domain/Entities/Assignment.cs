@@ -35,7 +35,7 @@ public class Assignment
 
   public DateOnly CreatedAt {set; get;} = DateOnly.FromDateTime(DateTime.UtcNow);
 
-  public required AssignmentState TaskState {set ; get;}
+  public required AssignmentState AssignmentState {set ; get;}
 
   public required DateOnly LastUpdatedAt {set ; get;}
 }
