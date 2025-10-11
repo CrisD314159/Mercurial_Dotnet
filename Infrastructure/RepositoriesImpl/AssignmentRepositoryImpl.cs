@@ -44,9 +44,10 @@ public class AssignmentRepositoryImpl(MercurialDBContext dbContext): IAssignment
         return userAssignments >= 100;
     }
 
-    public async Task<Assignment> GetAssignmentByAssignmentNameUserIdAndState(string name, string userId, AssignmentState assignmentState)
+    public async Task<Assignment> GetAssignmentByAssignmentNameUserIdAndState(string name, string userId, AssignmentState assignmentState, long subjectId)
     {
-       var assignment = await _dbContext.Assignments.Include(a => a.Note).Where(a => a.Title == name && a.UserId == userId && a.TaskState == assignmentState)
+       var assignment = await _dbContext.Assignments.Include(a => a.Note)
+       .Where(a => a.Title == name && a.UserId == userId && a.TaskState == assignmentState && a.SubjectId == subjectId)
            .FirstOrDefaultAsync() ?? throw new EntityNotFoundException("Assignment not found");
 
        return assignment;

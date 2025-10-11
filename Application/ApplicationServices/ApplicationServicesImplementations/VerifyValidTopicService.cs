@@ -12,13 +12,20 @@ public class VerifyValidTopicService(ITopicRepository topicService): IVerifyVali
   private readonly ITopicRepository _topicService = topicService;
   public async Task<bool> Execute(string title, string userId)
   {
+    Topic topic;
     if (await _topicService.UserHasExceededTopicLimit(userId))
       throw new ExceededLimitException("You've reached your maximum ammount of topics");
 
-    Topic topic = await _topicService.GetTopicByTopicNameAndUserId(title, userId);
-
+    try
+    {
+        topic = await _topicService.GetTopicByTopicNameAndUserId(title, userId);
+    }
+    catch (EntityNotFoundException)
+    {
+      return true;
+    }
     if (topic != null)
-      throw new EntityAlreadyExistsException($"There's already a topic with title {title}");
+      throw new EntityValidationException($"There's already a topic with title {title}");
     return true;
   }
 

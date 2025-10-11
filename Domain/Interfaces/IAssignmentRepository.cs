@@ -15,7 +15,7 @@ public interface IAssignmentRepository
   Task<Assignment> GetAssignmentByIdAync(Guid assignmentId);
 
   Task<bool> UserHasExeededMaximumAssignments(string userId);
-  Task<Assignment> GetAssignmentByAssignmentNameUserIdAndState(string name, string userId, AssignmentState assignmentState);
+  Task<Assignment> GetAssignmentByAssignmentNameUserIdAndState(string name, string userId, AssignmentState assignmentState, long subjectId);
   Task<Assignment> GetAssignmentByAssignmentIdAndUserId(Guid assignmentId, string userId);
 
   Task<List<AssignmentDTO>> GetUserAssignmentsAsync(string userId, int offset, int limit, AssignmentState assignmentState);

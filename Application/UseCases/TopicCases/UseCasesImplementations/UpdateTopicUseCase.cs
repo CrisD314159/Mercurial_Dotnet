@@ -1,4 +1,5 @@
 using FluentValidation;
+using MercurialBackendDotnet.Application.ApplicationServices.ApplicationServicesInterfaces;
 using MercurialBackendDotnet.Application.UseCases.TopicCases.UseCasesInterfaces;
 using MercurialBackendDotnet.Domain.DomainExceptions;
 using MercurialBackendDotnet.Domain.Interfaces;
@@ -8,14 +9,22 @@ using MercurialBackendDotnet.Presentation.Dto.InputDTO;
 namespace MercurialBackendDotnet.Application.UseCases.TopicCases.UseCasesImplementations;
 
 
-public class UpdateTopicUseCase(IValidator<UpdateTopicDTO> validator, ITopicRepository topicRepository): IUpdateTopicUseCase
+public class UpdateTopicUseCase(
+  IValidator<UpdateTopicDTO> validator,
+  ITopicRepository topicRepository,
+  IVerifyValidTopicService verifyValidTopicService
+
+  ) : IUpdateTopicUseCase
 {
 
   private readonly IValidator<UpdateTopicDTO> _validator = validator;
   private readonly ITopicRepository _topicRepository = topicRepository;
+  private readonly IVerifyValidTopicService _verifyTopic = verifyValidTopicService;
   public async Task Execute(string userId, UpdateTopicDTO updateTopicDTO)
   {
     _validator.ValidateAndThrow(updateTopicDTO);
+
+    await _verifyTopic.Execute(updateTopicDTO.Title, userId);
 
     var topic = await _topicRepository.GetTopicByIdAndUserId(updateTopicDTO.TopicId, userId)
     ?? throw new EntityNotFoundException("Topic not found"); ;

@@ -1,5 +1,6 @@
 using FluentValidation;
 using MercurialBackendDotnet.Application.ApplicationExceptions;
+using MercurialBackendDotnet.Application.ApplicationServices.ApplicationServicesInterfaces;
 using MercurialBackendDotnet.Application.UseCases.SubjectCases.UseCasesInterfaces;
 using MercurialBackendDotnet.Domain.DomainExceptions;
 using MercurialBackendDotnet.Domain.Interfaces;
@@ -12,14 +13,19 @@ namespace MercurialBackendDotnet.Application.UseCases.SubjectCases.UseCasesImple
 
 public class UpdateSubjectUseCase(ISubjectRepository subjectRepository,
 UserManager<User> userManager,
-IValidator<UpdateSubjectDTO> validator):IUpdateSubjectUseCase
+IValidator<UpdateSubjectDTO> validator,
+IVerifyValidSubjectService verifyValidSubjectService
+) :IUpdateSubjectUseCase
 {
   private readonly  UserManager<User> _userManager = userManager;
   private readonly ISubjectRepository _subjectRepository = subjectRepository;
   private readonly IValidator<UpdateSubjectDTO> _validator = validator;
+  private readonly IVerifyValidSubjectService _verifySubject = verifyValidSubjectService;
   public async Task Execute(string userId, UpdateSubjectDTO updateSubjectDTO)
   {
     _validator.ValidateAndThrow(updateSubjectDTO);
+
+    await _verifySubject.Execute(userId, updateSubjectDTO.Title);
 
     var subject = await _subjectRepository.GetSubjectBySubjectIdAndUserId(updateSubjectDTO.SubjectId, userId)
     ?? throw new EntityNotFoundException("Subject not found");

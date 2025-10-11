@@ -1,5 +1,6 @@
 using FluentValidation;
 using MercurialBackendDotnet.Application.ApplicationExceptions;
+using MercurialBackendDotnet.Application.ApplicationServices.ApplicationServicesInterfaces;
 using MercurialBackendDotnet.Application.UseCases.AssignmentCases.UseCasesInterfaces;
 using MercurialBackendDotnet.Domain.DomainExceptions;
 using MercurialBackendDotnet.Domain.Entities;
@@ -14,14 +15,19 @@ namespace MercurialBackendDotnet.Application.UseCases.AssignmentCases.UseCasesIm
 public class UpdateAssignmentUseCase(
 IAssignmentRepository assignmentRepository,
 ISubjectRepository subjectRepository,
-ITopicRepository topicRepository
-): IUpdateAssignmentUseCase
+ITopicRepository topicRepository,
+IVerifyValidAssignmentService verifyValidAssignmentService
+) : IUpdateAssignmentUseCase
 {
   private readonly IAssignmentRepository _assignmentRepository = assignmentRepository;
   private readonly ISubjectRepository _subjectRepository = subjectRepository;
   private readonly ITopicRepository _topicRepository = topicRepository;
+
+  private readonly IVerifyValidAssignmentService _verifyValidAssignment= verifyValidAssignmentService;
 public async Task Execute(string userId, UpdateAssignmentDTO updateAssignmentDTO)
   {
+    await _verifyValidAssignment.Execute(userId, updateAssignmentDTO.Title, updateAssignmentDTO.SubjectId);
+    
     var assignment = await _assignmentRepository.GetAssignmentByAssignmentIdAndUserId(updateAssignmentDTO.AssignmentId, userId);
 
     if (assignment.SubjectId != updateAssignmentDTO.SubjectId)

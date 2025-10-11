@@ -32,7 +32,7 @@ UserManager<User> userManager
   {
     _validator.ValidateAndThrow(createAssignmentDTO);
 
-    if (await _verifyValidAssignment.Execute(userId, createAssignmentDTO.Title))
+    if (await _verifyValidAssignment.Execute(userId, createAssignmentDTO.Title, createAssignmentDTO.SubjectId))
     {
       var user = await _userManager.FindByIdAsync(userId)
         ?? throw new EntityNotFoundException("User not found");

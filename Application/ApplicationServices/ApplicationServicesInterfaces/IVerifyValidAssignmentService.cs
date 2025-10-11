@@ -2,5 +2,5 @@ namespace MercurialBackendDotnet.Application.ApplicationServices.ApplicationServ
 
 public interface IVerifyValidAssignmentService
 {
-  Task<bool> Execute(string userId, string title);
+  Task<bool> Execute(string userId, string title, long subjectId);
 }
