@@ -17,7 +17,7 @@ public static class ApplicationServiceRegistration
     services.AddScoped<LoginUseCase>();
     services.AddScoped<LoginUsingGoogleUseCase>();
     services.AddScoped<LogoutUseCase>();
-    services.AddScoped<RefreshToken>();
+    services.AddScoped<RefreshTokenUseCase>();
 
     // Assignment use cases
     services.AddScoped<CreateAssignmentUseCase>();

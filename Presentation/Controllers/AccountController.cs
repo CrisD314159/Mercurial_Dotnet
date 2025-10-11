@@ -1,7 +1,7 @@
 using System.Security.Claims;
+using MercurialBackendDotnet.Application.UseCases.Account;
 using MercurialBackendDotnet.Domain.Model;
 using MercurialBackendDotnet.Presentation.Dto.InputDTO;
-using MercurialBackendDotnet.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,31 +9,40 @@ namespace MercurialBackendDotnet.Presentation.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AccountController(IAccountService accountService, SignInManager<User> signInManager, IConfiguration configuration) : ControllerBase
+public class AccountController(
+  LoginUseCase loginUseCase,
+  LogoutUseCase logoutUseCase,
+  RefreshTokenUseCase refreshTokenUseCase,
+  LoginUsingGoogleUseCase loginUsingGoogleUseCase
+, SignInManager<User> signInManager
+, IConfiguration configuration) : ControllerBase
 {
 
-  private readonly IAccountService _accountService = accountService;
+  private readonly LoginUseCase _loginUseCase = loginUseCase;
+  private readonly LogoutUseCase _logoutUseCase = logoutUseCase;
+  private readonly RefreshTokenUseCase _refreshTokenUseCase= refreshTokenUseCase;
+  private readonly LoginUsingGoogleUseCase _loginUsingGoogleUseCase = loginUsingGoogleUseCase;
   private readonly SignInManager<User> _signInManager = signInManager;
   private readonly IConfiguration _configuration = configuration;
 
   [HttpPost("login")]
   public async Task<IActionResult> Login(LoginDTO loginDTO)
   {
-    var loginResponse = await _accountService.Login(loginDTO);
+    var loginResponse = await _loginUseCase.Execute(loginDTO);
     return Ok(loginResponse);
   }
 
   [HttpDelete("logout")]
   public async Task<IActionResult> Logout(RefreshTokenDTO refreshTokenDTO)
   {
-    await _accountService.Logout(refreshTokenDTO.RefreshToken);
+    await _logoutUseCase.Execute(refreshTokenDTO.RefreshToken);
     return Ok();
   }
 
   [HttpPut("refreshToken")]
   public async Task<IActionResult> RefreshToken(RefreshTokenDTO refreshTokenDTO)
   {
-    var refreshResponse = await _accountService.RefreshToken(refreshTokenDTO.RefreshToken);
+    var refreshResponse = await _refreshTokenUseCase.Execute(refreshTokenDTO.RefreshToken);
     return Ok(refreshResponse);
   }
 
@@ -78,7 +87,7 @@ public class AccountController(IAccountService accountService, SignInManager<Use
       return Redirect($"{frontUrl}/login?error=login_failed");
     }
 
-    var tokenSession = await _accountService.SignInUsingGoogle(email, name);
+    var tokenSession = await _loginUsingGoogleUseCase.Execute(email, name);
 
     return Redirect($"{frontUrl}/api/auth/google?token={tokenSession.Token}&refresh={tokenSession.RefreshToken}");
   }

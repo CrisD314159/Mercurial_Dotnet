@@ -28,7 +28,7 @@ public class JWTServiceImpl(IConfiguration configuration):IjwtService
         claims.Add(new(ClaimTypes.Authentication, sessionId));
       }
 
-      var jwtKey = generateRefresh ? configuration["Jwt:RefreshKey"]: configuration["Jwt:Key"];
+      var jwtKey = generateRefresh ? _configuration["Jwt:RefreshKey"]: _configuration["Jwt:Key"];
 
       if (string.IsNullOrEmpty(jwtKey))
       {
@@ -39,8 +39,8 @@ public class JWTServiceImpl(IConfiguration configuration):IjwtService
 
       var token = new JwtSecurityToken(
 
-        issuer: configuration["Jwt:Issuer"],
-        audience: configuration["Jwt:Audience"],
+        issuer: _configuration["Jwt:Issuer"],
+        audience: _configuration["Jwt:Audience"],
         claims:claims,
         expires: generateRefresh ? DateTime.UtcNow.AddDays(7) : DateTime.UtcNow.AddHours(1),
         signingCredentials: credentials
@@ -52,7 +52,7 @@ public class JWTServiceImpl(IConfiguration configuration):IjwtService
     public ClaimsPrincipal ExtractRefreshToken(string refreshToken, out SecurityToken securityToken)
     {
       var handler = new JwtSecurityTokenHandler();
-      var key = Encoding.UTF8.GetBytes(configuration["Jwt:RefreshKey"] ?? throw new EntityValidationException("Key not found"));
+      var key = Encoding.UTF8.GetBytes(_configuration["Jwt:RefreshKey"] ?? throw new EntityValidationException("Key not found"));
 
       var validationParameters = new TokenValidationParameters()
       {

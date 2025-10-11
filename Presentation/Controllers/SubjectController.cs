@@ -1,7 +1,8 @@
 using System.Security.Claims;
+using MercurialBackendDotnet.Application.ApplicationExceptions;
+using MercurialBackendDotnet.Application.UseCases.SubjectCases;
+using MercurialBackendDotnet.Application.UseCases.UserCases;
 using MercurialBackendDotnet.Presentation.Dto.InputDTO;
-using MercurialBackendDotnet.Exceptions;
-using MercurialBackendDotnet.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,17 @@ namespace MercurialBackendDotnet.Presentation.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class SubjectController(ISubjectService subjectService) : ControllerBase
+public class SubjectController(
+  CreateSubjectUseCase createSubjectUseCase,
+  DeleteSubjectUseCase deleteSubjectUseCase,
+  GetUserSubjectsUseCase getUserSubjectsUseCase,
+  UpdateSubjectUseCase updateSubjectUseCase
+  ) : ControllerBase
 {
-  private readonly ISubjectService _subjectService = subjectService;
+  private readonly CreateSubjectUseCase _createSubjectUseCase = createSubjectUseCase;
+  private readonly DeleteSubjectUseCase _deleteSubjectUseCase = deleteSubjectUseCase;
+  private readonly GetUserSubjectsUseCase _getUserSubjectsUseCase = getUserSubjectsUseCase;
+  private readonly UpdateSubjectUseCase _updateSubjectUseCase = updateSubjectUseCase;
 
 
   [HttpPost]
@@ -21,7 +30,7 @@ public class SubjectController(ISubjectService subjectService) : ControllerBase
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
-    await _subjectService.CreateSubjectDTO(userId, createSubjectDTO);
+    await _createSubjectUseCase.Execute(userId, createSubjectDTO);
     return Created();
   }
 
@@ -31,7 +40,7 @@ public class SubjectController(ISubjectService subjectService) : ControllerBase
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
-    await _subjectService.UpdateSubject(userId, updateSubjectDTO);
+    await _updateSubjectUseCase.Execute(userId, updateSubjectDTO);
     return Ok();
   }
 
@@ -41,7 +50,7 @@ public class SubjectController(ISubjectService subjectService) : ControllerBase
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
-    await _subjectService.DeleteSubject(userId, subjectId);
+    await _deleteSubjectUseCase.Execute(userId, subjectId);
     return Ok();
   }
 
@@ -51,7 +60,7 @@ public class SubjectController(ISubjectService subjectService) : ControllerBase
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
-    var subjects = await _subjectService.GetUserSubjects(userId, offset, limit);
+    var subjects = await _getUserSubjectsUseCase.Execute(userId, offset, limit);
     return Ok(subjects);
   }
 

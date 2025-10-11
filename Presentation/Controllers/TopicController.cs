@@ -1,20 +1,29 @@
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using MercurialBackendDotnet.Presentation.Dto.InputDTO;
-using MercurialBackendDotnet.Exceptions;
-using MercurialBackendDotnet.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MercurialBackendDotnet.Application.UseCases.TopicCases;
+using MercurialBackendDotnet.Application.ApplicationExceptions;
 
 namespace MercurialBackendDotnet.Presentation.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TopicController(ITopicService topicService) : ControllerBase
+public class TopicController(
+  CreateTopicUseCase createTopicUseCase,
+
+DeleteTopicUseCase deleteTopicUseCase,
+GetUserTopicsUseCase getUserTopicsUseCase,
+UpdateTopicUseCase updateTopicUseCase
+  ) : ControllerBase
 {
 
-  private readonly ITopicService _topicService = topicService;
+  private readonly CreateTopicUseCase _createTopicUseCase = createTopicUseCase;
+  private readonly DeleteTopicUseCase _deleteTopicUseCase = deleteTopicUseCase;
+  private readonly GetUserTopicsUseCase _getUserTopicsUseCase = getUserTopicsUseCase;
+  private readonly UpdateTopicUseCase _updateTopicUseCase = updateTopicUseCase;
 
 
   [HttpPost]
@@ -23,7 +32,7 @@ public class TopicController(ITopicService topicService) : ControllerBase
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
-    await _topicService.CreateTopic(userId, createTopicDTO);
+    await _createTopicUseCase.Execute(userId, createTopicDTO);
     return Created();
 
   }
@@ -34,7 +43,7 @@ public class TopicController(ITopicService topicService) : ControllerBase
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
-    await _topicService.UpdateTopic(userId, updateTopicDTO);
+    await _updateTopicUseCase.Execute(userId, updateTopicDTO);
     return Ok();
   }
   
@@ -45,7 +54,7 @@ public class TopicController(ITopicService topicService) : ControllerBase
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
-    await _topicService.DeleteTopic(userId, topicId);
+    await _deleteTopicUseCase.Execute(userId, topicId);
     return Ok();
   }
 
@@ -55,7 +64,7 @@ public class TopicController(ITopicService topicService) : ControllerBase
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
-    var topics = await _topicService.GetUserTopics(userId, offset, limit);
+    var topics = await _getUserTopicsUseCase.Execute(userId, offset, limit);
     return Ok(topics);
   }
 }

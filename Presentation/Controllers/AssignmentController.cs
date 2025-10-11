@@ -1,19 +1,35 @@
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using MercurialBackendDotnet.Presentation.Dto.InputDTO;
-using MercurialBackendDotnet.Exceptions;
-using MercurialBackendDotnet.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MercurialBackendDotnet.Application.UseCases.AssignmentCases;
+using MercurialBackendDotnet.Application.ApplicationExceptions;
 
 namespace MercurialBackendDotnet.Presentation.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AssignmentController(IAssignmentService assignmentService): ControllerBase
+public class AssignmentController(
+  CreateAssignmentUseCase createAssignmentUseCase,
+  DeleteAssignmentUseCase deleteAssignmentUseCase,
+  GetUserDoneAssignmentsUseCase getUserDoneAssignmentsUseCase,
+  GetUserTodoAssignmentsUseCase getUserTodoAssignmentsUseCase,
+  MarkAssignmentAsDoneUseCase markAssignmentAsDoneUseCase,
+  MarkAssignmentInProgressUseCase markAssignmentInProgressUseCase,
+  MarkAssignmentTodoUseCase markAssignmentTodoUseCase,
+  UpdateAssignmentUseCase updateAssignmentUseCase
+) : ControllerBase
 {
-  private readonly IAssignmentService _assignmentService = assignmentService;
+  private readonly CreateAssignmentUseCase _createAssignmentUseCase = createAssignmentUseCase;
+  private readonly DeleteAssignmentUseCase _DeleteAssignmentUseCase= deleteAssignmentUseCase;
+  private readonly GetUserDoneAssignmentsUseCase _getUserDoneAssignmentsUseCase = getUserDoneAssignmentsUseCase;
+  private readonly GetUserTodoAssignmentsUseCase _getUserTodoAssignmentsUseCase = getUserTodoAssignmentsUseCase;
+  private readonly MarkAssignmentAsDoneUseCase _markAssignmentAsDoneUseCase = markAssignmentAsDoneUseCase;
+  private readonly MarkAssignmentInProgressUseCase _markAssignmentInProgressUseCase = markAssignmentInProgressUseCase;
+  private readonly MarkAssignmentTodoUseCase _markAssignmentTodoUseCase = markAssignmentTodoUseCase;
+  private readonly UpdateAssignmentUseCase _updateAssignmentUseCase = updateAssignmentUseCase;
 
   [HttpPost]
   [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
@@ -22,7 +38,7 @@ public class AssignmentController(IAssignmentService assignmentService): Control
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
 
-    await _assignmentService.CreateAssignment(userId, createAssignmentDTO);
+    await _createAssignmentUseCase.Execute(userId, createAssignmentDTO);
     return Created();
 
   }
@@ -34,7 +50,7 @@ public class AssignmentController(IAssignmentService assignmentService): Control
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
 
-    await _assignmentService.UpdateAssignment(userId, updateAssignmentDTO);
+    await _updateAssignmentUseCase.Execute(userId, updateAssignmentDTO);
     return Ok();
 
   }
@@ -46,7 +62,7 @@ public class AssignmentController(IAssignmentService assignmentService): Control
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
 
-    await _assignmentService.DeleteAssignment(userId, assignmentId);
+    await _DeleteAssignmentUseCase.Execute(userId, assignmentId);
     return Ok();
 
   }
@@ -58,7 +74,7 @@ public class AssignmentController(IAssignmentService assignmentService): Control
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
 
-    var assignments = await _assignmentService.GetUserDoneTasks(userId, offset, limit);
+    var assignments = await _getUserDoneAssignmentsUseCase.Execute(userId, offset, limit);
     return Ok(assignments);
 
   }
@@ -70,7 +86,7 @@ public class AssignmentController(IAssignmentService assignmentService): Control
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
 
-    var assignments = await _assignmentService.GetUserTodoTasks(userId, offset, limit);
+    var assignments = await _getUserTodoAssignmentsUseCase.Execute(userId, offset, limit);
     return Ok(assignments);
 
   }
@@ -82,7 +98,7 @@ public class AssignmentController(IAssignmentService assignmentService): Control
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
 
-    await _assignmentService.MarkAssignmentAsDone(userId, assignmentId);
+    await _markAssignmentAsDoneUseCase.Execute(userId, assignmentId);
     return Ok();
 
   }
@@ -93,7 +109,7 @@ public class AssignmentController(IAssignmentService assignmentService): Control
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
     ?? throw new UnauthorizedException("You're not authorized to perform this action");
 
-    await _assignmentService.MarkAssigmentTodo(userId, assignmentId);
+    await _markAssignmentTodoUseCase.Execute(userId, assignmentId);
     return Ok();
 
   }

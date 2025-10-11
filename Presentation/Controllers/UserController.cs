@@ -1,26 +1,41 @@
 using System.Security.Claims;
-using System.Threading.Tasks;
 using MercurialBackendDotnet.Presentation.Dto.InputDTO;
-using MercurialBackendDotnet.Dto.OutputDTO;
-using MercurialBackendDotnet.Exceptions;
-using MercurialBackendDotnet.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MercurialBackendDotnet.Application.UseCases.UserCases;
+using MercurialBackendDotnet.Application.ApplicationExceptions;
 
 namespace MercurialBackendDotnet.Presentation.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UserController(IUserService userService) : ControllerBase
+public class UserController(
+  ChangeUserPasswordUseCase changeUserPasswordUseCase,
+  CreateRegularUserUseCase createRegularUserUseCase,
+  CreateThirdPartyUserUseCase createThirdPartyUserUseCase,
+  DeleteUserUseCase deleteUserUseCase,
+  GetUserOverviewUseCase getUserOverviewUseCase,
+  RecoverUserAccountUseCase recoverUserAccountUseCase,
+  UpdateUserUseCase updateUserUseCase,
+  VerifyUserUseCase verifyUserUseCase
+
+  ) : ControllerBase
 {
-  private readonly IUserService _userService = userService;
+  private readonly ChangeUserPasswordUseCase _changeUserPasswordUseCase = changeUserPasswordUseCase;
+  private readonly CreateRegularUserUseCase _createRegularUserUseCase = createRegularUserUseCase;
+  private readonly CreateThirdPartyUserUseCase _createThirdPartyUserUseCase = createThirdPartyUserUseCase;
+  private readonly DeleteUserUseCase _deleteUserUseCase = deleteUserUseCase;
+  private readonly GetUserOverviewUseCase _getUserOverviewUseCase = getUserOverviewUseCase;
+  private readonly RecoverUserAccountUseCase _recoverUserAccountUseCase = recoverUserAccountUseCase;
+  private readonly UpdateUserUseCase _updateUserUseCase = updateUserUseCase;
+  private readonly VerifyUserUseCase _verifyUserUseCase = verifyUserUseCase;
 
 
   [HttpPost]
   public async Task<IActionResult> CreateUser(CreateUserDTO createUserDTO)
   {
-    await _userService.CreateUser(createUserDTO);
+    await _createRegularUserUseCase.Execute(createUserDTO);
     return Created();
   }
 
@@ -32,7 +47,7 @@ public class UserController(IUserService userService) : ControllerBase
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
     throw new UnauthorizedException("You're not authorized to perform this action");
 
-    await _userService.DeleteUser(userId);
+    await _deleteUserUseCase.Execute(userId);
     return Ok();
   }
 
@@ -42,7 +57,7 @@ public class UserController(IUserService userService) : ControllerBase
   {
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
     throw new UnauthorizedException("You're not authorized to perform this action");
-    var user = await _userService.GetUserOverview(userId);
+    var user = await _getUserOverviewUseCase.Execute(userId);
     return Ok(user);
   }
 
@@ -53,14 +68,14 @@ public class UserController(IUserService userService) : ControllerBase
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
     throw new UnauthorizedException("You're not authorized to perform this action");
     
-    await _userService.UpdateUser(userId, updateUserDTO);
+    await _updateUserUseCase.Execute(userId, updateUserDTO);
     return Ok();
   }
 
   [HttpPut("verifyUser")]
   public async Task<IActionResult> VerifyUser(VerifyuserDTO verifyuserDTO)
   {
-    await _userService.VerifyUser(verifyuserDTO);
+    await _verifyUserUseCase.Execute(verifyuserDTO);
     return Ok();
 
   }
@@ -68,14 +83,14 @@ public class UserController(IUserService userService) : ControllerBase
   [HttpPut("recoverAccount")]
   public async Task<IActionResult> RecoverAccount(RecoverAccountDTO recoverAccountDTO)
   {
-    await _userService.RecoverAccount(recoverAccountDTO);
+    await _recoverUserAccountUseCase.Execute(recoverAccountDTO);
     return Ok();
   }
 
   [HttpPut("changePassword")]
   public async Task<IActionResult> ChangePassword(ChangePasswordDTO changePasswordDTO)
   {
-    await _userService.ChangePassword(changePasswordDTO);
+    await _changeUserPasswordUseCase.Execute(changePasswordDTO);
     return Ok();
   }
 }

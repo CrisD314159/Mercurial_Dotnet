@@ -12,7 +12,7 @@ public class ChangeUserPasswordUseCase(IValidator<ChangePasswordDTO> validator, 
 {
   private readonly IValidator<ChangePasswordDTO> _validator = validator;
   private readonly UserManager<User> _userManager = userManager;
-  public async Task ChangePassword(ChangePasswordDTO changePasswordDTO)
+  public async Task Execute(ChangePasswordDTO changePasswordDTO)
   {
     _validator.ValidateAndThrow(changePasswordDTO);
 

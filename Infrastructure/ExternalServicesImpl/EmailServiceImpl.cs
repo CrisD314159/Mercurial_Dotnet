@@ -26,8 +26,8 @@ public class EmailServiceImpl(IConfiguration configuration): IEmailService
     public async Task SendEmail(MimeMessage message)
     {
         var client = new SmtpClient();
-        var key = configuration["Gmail:Token"];
-        var gmail = configuration["Gmail:Mail"];
+        var key = _configuration["Gmail:Token"];
+        var gmail = _configuration["Gmail:Mail"];
 
         await client.ConnectAsync("smtp.gmail.com", 465, MailKit.Security.SecureSocketOptions.SslOnConnect);
 

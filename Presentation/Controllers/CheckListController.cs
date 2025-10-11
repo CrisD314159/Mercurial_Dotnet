@@ -1,5 +1,5 @@
+using MercurialBackendDotnet.Application.UseCases.CheckListCases;
 using MercurialBackendDotnet.Presentation.Dto.InputDTO;
-using MercurialBackendDotnet.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,16 +8,32 @@ namespace MercurialBackendDotnet.Presentation.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class CheckListController(ICheckListService checkListService):ControllerBase 
+public class CheckListController(
+  AddNodeUseCase addNodeUseCase,
+  CreateChecklistUseCase createChecklistUseCase,
+  DeleteChecklistUseCase deleteChecklistUseCase,
+  GetCheckListUseCase getCheckListUseCase,
+  MarkNodeAsDoneUseCase markNodeAsDoneUseCase,
+  RemoveNodeUseCase removeNodeUseCase,
+  UnmarkNodeAsDoneUseCase unmarkNodeAsDoneUseCase,
+  UpdateNodeUseCase updateNodeUseCase
+  ) :ControllerBase 
 {
 
-  private readonly ICheckListService _checklistService = checkListService;
+  private readonly AddNodeUseCase _addNodeUseCase = addNodeUseCase;
+  private readonly CreateChecklistUseCase _createChecklistUseCase = createChecklistUseCase;
+  private readonly DeleteChecklistUseCase _deleteChecklistUseCase = deleteChecklistUseCase;
+  private readonly GetCheckListUseCase _getCheckListUseCase = getCheckListUseCase;
+  private readonly MarkNodeAsDoneUseCase _markNodeAsDoneUseCase= markNodeAsDoneUseCase;
+  private readonly RemoveNodeUseCase _removeNodeUseCase = removeNodeUseCase;
+  private readonly UnmarkNodeAsDoneUseCase _unmarkNodeAsDoneUseCase = unmarkNodeAsDoneUseCase;
+  private readonly UpdateNodeUseCase _updateNodeUseCase = updateNodeUseCase;
 
   [HttpPost]
   [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
   public async Task<IActionResult> CreateChecklist(CreateChecklistDTO createChecklistDTO)
   {
-    await _checklistService.CreateCheckList(createChecklistDTO.AssignmentId);
+    await _createChecklistUseCase.Execute(createChecklistDTO.AssignmentId);
     return Created();
   }
 
@@ -25,7 +41,7 @@ public class CheckListController(ICheckListService checkListService):ControllerB
   [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
   public async Task<IActionResult> AddNodeChecklist(AddNodeDTO addNodeDTO)
   {
-    await _checklistService.AddNode(addNodeDTO);
+    await _addNodeUseCase.Execute(addNodeDTO);
     return Ok();
   }
 
@@ -33,7 +49,7 @@ public class CheckListController(ICheckListService checkListService):ControllerB
   [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
   public async Task<IActionResult> GetChecklist(Guid assignmentId)
   {
-    var checkList = await _checklistService.GetChecklist(assignmentId);
+    var checkList = await _getCheckListUseCase.Execute(assignmentId);
     return Ok(checkList);
   }
 
@@ -41,7 +57,7 @@ public class CheckListController(ICheckListService checkListService):ControllerB
   [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
   public async Task<IActionResult> DeleteChecklist(long checklistId)
   {
-    await _checklistService.DeleteCheckList(checklistId);
+    await _deleteChecklistUseCase.Execute(checklistId);
     return Ok();
   }
 
@@ -49,7 +65,7 @@ public class CheckListController(ICheckListService checkListService):ControllerB
   [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
   public async Task<IActionResult> RemoveNodeFromChecklist(long nodeId)
   {
-    await _checklistService.RemoveNode(nodeId);
+    await _removeNodeUseCase.Execute(nodeId);
     return Ok();
   }
 
@@ -57,7 +73,7 @@ public class CheckListController(ICheckListService checkListService):ControllerB
   [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
   public async Task<IActionResult> MarkAsDoneNode(long nodeId)
   {
-    await _checklistService.MarkAsDoneNode(nodeId);
+    await _markNodeAsDoneUseCase.Execute(nodeId);
     return Ok();
   }
 
@@ -65,7 +81,7 @@ public class CheckListController(ICheckListService checkListService):ControllerB
   [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
   public async Task<IActionResult> UnmarkAsDoneNode(long nodeId)
   {
-    await _checklistService.UnmarkAsDoneNode(nodeId);
+    await _unmarkNodeAsDoneUseCase.Execute(nodeId);
     return Ok();
   }
 
@@ -73,7 +89,7 @@ public class CheckListController(ICheckListService checkListService):ControllerB
   [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
   public async Task<IActionResult> UpdateNode(UpdateNodeDTO nodeDTO)
   {
-    await _checklistService.UpdateNode(nodeDTO);
+    await _updateNodeUseCase.Execute(nodeDTO);
     return Ok();
   }
 

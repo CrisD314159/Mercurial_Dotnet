@@ -8,7 +8,7 @@ using MercurialBackendDotnet.Presentation.Dto.OutputDTO;
 namespace MercurialBackendDotnet.Application.UseCases.Account;
 
 
-public class RefreshToken (IjwtService jwtService, ISessionsRepository sessionsRepository)
+public class RefreshTokenUseCase (IjwtService jwtService, ISessionsRepository sessionsRepository)
 {
 
   private readonly IjwtService _jwtService = jwtService;
