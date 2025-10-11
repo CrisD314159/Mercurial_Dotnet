@@ -6,24 +6,24 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MercurialBackendDotnet.Application.UseCases.TopicCases;
 using MercurialBackendDotnet.Application.ApplicationExceptions;
+using MercurialBackendDotnet.Application.UseCases.TopicCases.UseCasesInterfaces;
 
 namespace MercurialBackendDotnet.Presentation.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class TopicController(
-  CreateTopicUseCase createTopicUseCase,
-
-DeleteTopicUseCase deleteTopicUseCase,
-GetUserTopicsUseCase getUserTopicsUseCase,
-UpdateTopicUseCase updateTopicUseCase
+  ICreateTopicUseCase createTopicUseCase,
+  IDeleteTopicUseCase deleteTopicUseCase,
+  IGetUserTopicsUseCase getUserTopicsUseCase,
+  IUpdateTopicUseCase updateTopicUseCase
   ) : ControllerBase
 {
 
-  private readonly CreateTopicUseCase _createTopicUseCase = createTopicUseCase;
-  private readonly DeleteTopicUseCase _deleteTopicUseCase = deleteTopicUseCase;
-  private readonly GetUserTopicsUseCase _getUserTopicsUseCase = getUserTopicsUseCase;
-  private readonly UpdateTopicUseCase _updateTopicUseCase = updateTopicUseCase;
+  private readonly ICreateTopicUseCase _createTopicUseCase = createTopicUseCase;
+  private readonly IDeleteTopicUseCase _deleteTopicUseCase = deleteTopicUseCase;
+  private readonly IGetUserTopicsUseCase _getUserTopicsUseCase = getUserTopicsUseCase;
+  private readonly IUpdateTopicUseCase _updateTopicUseCase = updateTopicUseCase;
 
 
   [HttpPost]

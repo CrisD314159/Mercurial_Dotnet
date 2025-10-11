@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace MercurialBackendDotnet.Infrastructure.ExternalServicesImpl;
 
-public class JWTServiceImpl(IConfiguration configuration):IjwtService
+public class JWTServiceImpl(IConfiguration configuration):IJwtService
 {
 
   private readonly IConfiguration _configuration = configuration;

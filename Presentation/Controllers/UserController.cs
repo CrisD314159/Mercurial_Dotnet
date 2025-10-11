@@ -5,31 +5,32 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MercurialBackendDotnet.Application.UseCases.UserCases;
 using MercurialBackendDotnet.Application.ApplicationExceptions;
+using MercurialBackendDotnet.Application.UseCases.UserCases.UseCasesInterfaces;
 
 namespace MercurialBackendDotnet.Presentation.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class UserController(
-  ChangeUserPasswordUseCase changeUserPasswordUseCase,
-  CreateRegularUserUseCase createRegularUserUseCase,
-  CreateThirdPartyUserUseCase createThirdPartyUserUseCase,
-  DeleteUserUseCase deleteUserUseCase,
-  GetUserOverviewUseCase getUserOverviewUseCase,
-  RecoverUserAccountUseCase recoverUserAccountUseCase,
-  UpdateUserUseCase updateUserUseCase,
-  VerifyUserUseCase verifyUserUseCase
+  IChangeUserPasswordUseCase changeUserPasswordUseCase,
+  ICreateRegularUserUseCase createRegularUserUseCase,
+  ICreateThirdPartyUserUseCase createThirdPartyUserUseCase,
+  IDeleteUserUseCase deleteUserUseCase,
+  IGetUserOverviewUseCase getUserOverviewUseCase,
+  IRecoverUserAccountUseCase recoverUserAccountUseCase,
+  IUpdateUserUseCase updateUserUseCase,
+  IVerifyUserUseCase verifyUserUseCase
 
   ) : ControllerBase
 {
-  private readonly ChangeUserPasswordUseCase _changeUserPasswordUseCase = changeUserPasswordUseCase;
-  private readonly CreateRegularUserUseCase _createRegularUserUseCase = createRegularUserUseCase;
-  private readonly CreateThirdPartyUserUseCase _createThirdPartyUserUseCase = createThirdPartyUserUseCase;
-  private readonly DeleteUserUseCase _deleteUserUseCase = deleteUserUseCase;
-  private readonly GetUserOverviewUseCase _getUserOverviewUseCase = getUserOverviewUseCase;
-  private readonly RecoverUserAccountUseCase _recoverUserAccountUseCase = recoverUserAccountUseCase;
-  private readonly UpdateUserUseCase _updateUserUseCase = updateUserUseCase;
-  private readonly VerifyUserUseCase _verifyUserUseCase = verifyUserUseCase;
+  private readonly IChangeUserPasswordUseCase _changeUserPasswordUseCase = changeUserPasswordUseCase;
+  private readonly ICreateRegularUserUseCase _createRegularUserUseCase = createRegularUserUseCase;
+  private readonly ICreateThirdPartyUserUseCase _createThirdPartyUserUseCase = createThirdPartyUserUseCase;
+  private readonly IDeleteUserUseCase _deleteUserUseCase = deleteUserUseCase;
+  private readonly IGetUserOverviewUseCase _getUserOverviewUseCase = getUserOverviewUseCase;
+  private readonly IRecoverUserAccountUseCase _recoverUserAccountUseCase = recoverUserAccountUseCase;
+  private readonly IUpdateUserUseCase _updateUserUseCase = updateUserUseCase;
+  private readonly IVerifyUserUseCase _verifyUserUseCase = verifyUserUseCase;
 
 
   [HttpPost]

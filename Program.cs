@@ -14,6 +14,7 @@ using MercurialBackendDotnet.Presentation.Dto.InputDTO;
 using MercurialBackendDotnet.Application.Validations;
 using MercurialBackendDotnet.Presentation.GlobalExceptionFilters;
 using MercurialBackendDotnet.Application.DependencyInjection;
+using MercurialBackendDotnet.Infrastructure.InfrastructureInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,11 +70,19 @@ builder.Services.AddIdentity<User, IdentityRole<string>>(options =>
 
 //Services injection
 builder.Services.Scan(selector => selector
-    .FromAssemblies(typeof(ApplicationServiceRegistration).Assembly)
+    .FromAssembliesOf(typeof(ApplicationServiceRegistration))
     .AddClasses(classes => classes.Where(c => c.Name.EndsWith("UseCase")))
     .AsImplementedInterfaces()
     .WithScopedLifetime()
 );
+
+
+
+// Infrastructure repositories injection
+
+builder.Services.AddInfrastructureServices();
+
+builder.Services.AddApplicationServices();
 
 // Adding validations 
 // Añade las validaciones de fluent validation

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using MercurialBackendDotnet.Application.ApplicationExceptions;
 using MercurialBackendDotnet.Application.UseCases.SubjectCases;
+using MercurialBackendDotnet.Application.UseCases.SubjectCases.UseCasesInterfaces;
 using MercurialBackendDotnet.Application.UseCases.UserCases;
 using MercurialBackendDotnet.Presentation.Dto.InputDTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,16 +13,16 @@ namespace MercurialBackendDotnet.Presentation.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class SubjectController(
-  CreateSubjectUseCase createSubjectUseCase,
-  DeleteSubjectUseCase deleteSubjectUseCase,
-  GetUserSubjectsUseCase getUserSubjectsUseCase,
-  UpdateSubjectUseCase updateSubjectUseCase
+  ICreateSubjectUseCase createSubjectUseCase,
+  IDeleteSubjectUseCase deleteSubjectUseCase,
+  IGetUserSubjectsUseCase getUserSubjectsUseCase,
+  IUpdateSubjectUseCase updateSubjectUseCase
   ) : ControllerBase
 {
-  private readonly CreateSubjectUseCase _createSubjectUseCase = createSubjectUseCase;
-  private readonly DeleteSubjectUseCase _deleteSubjectUseCase = deleteSubjectUseCase;
-  private readonly GetUserSubjectsUseCase _getUserSubjectsUseCase = getUserSubjectsUseCase;
-  private readonly UpdateSubjectUseCase _updateSubjectUseCase = updateSubjectUseCase;
+  private readonly ICreateSubjectUseCase _createSubjectUseCase = createSubjectUseCase;
+  private readonly IDeleteSubjectUseCase _deleteSubjectUseCase = deleteSubjectUseCase;
+  private readonly IGetUserSubjectsUseCase _getUserSubjectsUseCase = getUserSubjectsUseCase;
+  private readonly IUpdateSubjectUseCase _updateSubjectUseCase = updateSubjectUseCase;
 
 
   [HttpPost]

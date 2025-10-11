@@ -1,4 +1,5 @@
 using MercurialBackendDotnet.Application.UseCases.CheckListCases;
+using MercurialBackendDotnet.Application.UseCases.CheckListCases.UseCasesInterfaces;
 using MercurialBackendDotnet.Presentation.Dto.InputDTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -9,25 +10,25 @@ namespace MercurialBackendDotnet.Presentation.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class CheckListController(
-  AddNodeUseCase addNodeUseCase,
-  CreateChecklistUseCase createChecklistUseCase,
-  DeleteChecklistUseCase deleteChecklistUseCase,
-  GetCheckListUseCase getCheckListUseCase,
-  MarkNodeAsDoneUseCase markNodeAsDoneUseCase,
-  RemoveNodeUseCase removeNodeUseCase,
-  UnmarkNodeAsDoneUseCase unmarkNodeAsDoneUseCase,
-  UpdateNodeUseCase updateNodeUseCase
+  IAddNodeUseCase addNodeUseCase,
+  ICreateChecklistUseCase createChecklistUseCase,
+  IDeleteChecklistUseCase deleteChecklistUseCase,
+  IGetChecklistUseCase getCheckListUseCase,
+  IMarkNodeAsDoneUseCase markNodeAsDoneUseCase,
+  IRemoveNodeUseCase removeNodeUseCase,
+  IUnmarkNodeAsDoneUseCase unmarkNodeAsDoneUseCase,
+  IUpdateNodeUseCase updateNodeUseCase
   ) :ControllerBase 
 {
 
-  private readonly AddNodeUseCase _addNodeUseCase = addNodeUseCase;
-  private readonly CreateChecklistUseCase _createChecklistUseCase = createChecklistUseCase;
-  private readonly DeleteChecklistUseCase _deleteChecklistUseCase = deleteChecklistUseCase;
-  private readonly GetCheckListUseCase _getCheckListUseCase = getCheckListUseCase;
-  private readonly MarkNodeAsDoneUseCase _markNodeAsDoneUseCase= markNodeAsDoneUseCase;
-  private readonly RemoveNodeUseCase _removeNodeUseCase = removeNodeUseCase;
-  private readonly UnmarkNodeAsDoneUseCase _unmarkNodeAsDoneUseCase = unmarkNodeAsDoneUseCase;
-  private readonly UpdateNodeUseCase _updateNodeUseCase = updateNodeUseCase;
+  private readonly IAddNodeUseCase _addNodeUseCase = addNodeUseCase;
+  private readonly ICreateChecklistUseCase _createChecklistUseCase = createChecklistUseCase;
+  private readonly IDeleteChecklistUseCase _deleteChecklistUseCase = deleteChecklistUseCase;
+  private readonly IGetChecklistUseCase _getCheckListUseCase = getCheckListUseCase;
+  private readonly IMarkNodeAsDoneUseCase _markNodeAsDoneUseCase= markNodeAsDoneUseCase;
+  private readonly IRemoveNodeUseCase _removeNodeUseCase = removeNodeUseCase;
+  private readonly IUnmarkNodeAsDoneUseCase _unmarkNodeAsDoneUseCase = unmarkNodeAsDoneUseCase;
+  private readonly IUpdateNodeUseCase _updateNodeUseCase = updateNodeUseCase;
 
   [HttpPost]
   [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

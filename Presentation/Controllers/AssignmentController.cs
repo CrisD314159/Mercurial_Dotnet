@@ -6,30 +6,31 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MercurialBackendDotnet.Application.UseCases.AssignmentCases;
 using MercurialBackendDotnet.Application.ApplicationExceptions;
+using MercurialBackendDotnet.Application.UseCases.AssignmentCases.UseCasesInterfaces;
 
 namespace MercurialBackendDotnet.Presentation.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class AssignmentController(
-  CreateAssignmentUseCase createAssignmentUseCase,
-  DeleteAssignmentUseCase deleteAssignmentUseCase,
-  GetUserDoneAssignmentsUseCase getUserDoneAssignmentsUseCase,
-  GetUserTodoAssignmentsUseCase getUserTodoAssignmentsUseCase,
-  MarkAssignmentAsDoneUseCase markAssignmentAsDoneUseCase,
-  MarkAssignmentInProgressUseCase markAssignmentInProgressUseCase,
-  MarkAssignmentTodoUseCase markAssignmentTodoUseCase,
-  UpdateAssignmentUseCase updateAssignmentUseCase
+  ICreateAssignmentUseCase createAssignmentUseCase,
+  IDeleteAssignmentUseCase deleteAssignmentUseCase,
+  IGetUserDoneAssignmentsUseCase getUserDoneAssignmentsUseCase,
+  IGetUserTodoAssignmentsUseCase getUserTodoAssignmentsUseCase,
+  IMarkAssignmentAsDoneUseCase markAssignmentAsDoneUseCase,
+  IMarkAssignmentInProgressUseCase markAssignmentInProgressUseCase,
+  IMarkAssignmentTodoUseCase markAssignmentTodoUseCase,
+  IUpdateAssignmentUseCase updateAssignmentUseCase
 ) : ControllerBase
 {
-  private readonly CreateAssignmentUseCase _createAssignmentUseCase = createAssignmentUseCase;
-  private readonly DeleteAssignmentUseCase _DeleteAssignmentUseCase= deleteAssignmentUseCase;
-  private readonly GetUserDoneAssignmentsUseCase _getUserDoneAssignmentsUseCase = getUserDoneAssignmentsUseCase;
-  private readonly GetUserTodoAssignmentsUseCase _getUserTodoAssignmentsUseCase = getUserTodoAssignmentsUseCase;
-  private readonly MarkAssignmentAsDoneUseCase _markAssignmentAsDoneUseCase = markAssignmentAsDoneUseCase;
-  private readonly MarkAssignmentInProgressUseCase _markAssignmentInProgressUseCase = markAssignmentInProgressUseCase;
-  private readonly MarkAssignmentTodoUseCase _markAssignmentTodoUseCase = markAssignmentTodoUseCase;
-  private readonly UpdateAssignmentUseCase _updateAssignmentUseCase = updateAssignmentUseCase;
+  private readonly ICreateAssignmentUseCase _createAssignmentUseCase = createAssignmentUseCase;
+  private readonly IDeleteAssignmentUseCase _DeleteAssignmentUseCase= deleteAssignmentUseCase;
+  private readonly IGetUserDoneAssignmentsUseCase _getUserDoneAssignmentsUseCase = getUserDoneAssignmentsUseCase;
+  private readonly IGetUserTodoAssignmentsUseCase _getUserTodoAssignmentsUseCase = getUserTodoAssignmentsUseCase;
+  private readonly IMarkAssignmentAsDoneUseCase _markAssignmentAsDoneUseCase = markAssignmentAsDoneUseCase;
+  private readonly IMarkAssignmentInProgressUseCase _markAssignmentInProgressUseCase = markAssignmentInProgressUseCase;
+  private readonly IMarkAssignmentTodoUseCase _markAssignmentTodoUseCase = markAssignmentTodoUseCase;
+  private readonly IUpdateAssignmentUseCase _updateAssignmentUseCase = updateAssignmentUseCase;
 
   [HttpPost]
   [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]

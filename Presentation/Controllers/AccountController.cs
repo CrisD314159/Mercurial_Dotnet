@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using MercurialBackendDotnet.Application.UseCases.Account;
+using MercurialBackendDotnet.Application.UseCases.Account.UseCasesInterfaces;
 using MercurialBackendDotnet.Domain.Model;
 using MercurialBackendDotnet.Presentation.Dto.InputDTO;
 using Microsoft.AspNetCore.Identity;
@@ -10,18 +11,18 @@ namespace MercurialBackendDotnet.Presentation.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class AccountController(
-  LoginUseCase loginUseCase,
-  LogoutUseCase logoutUseCase,
-  RefreshTokenUseCase refreshTokenUseCase,
-  LoginUsingGoogleUseCase loginUsingGoogleUseCase
+  ILoginUseCase loginUseCase,
+  ILogoutUseCase logoutUseCase,
+  IRefreshTokenUseCase refreshTokenUseCase,
+  ILoginUsingGoogleUseCase loginUsingGoogleUseCase
 , SignInManager<User> signInManager
 , IConfiguration configuration) : ControllerBase
 {
 
-  private readonly LoginUseCase _loginUseCase = loginUseCase;
-  private readonly LogoutUseCase _logoutUseCase = logoutUseCase;
-  private readonly RefreshTokenUseCase _refreshTokenUseCase= refreshTokenUseCase;
-  private readonly LoginUsingGoogleUseCase _loginUsingGoogleUseCase = loginUsingGoogleUseCase;
+  private readonly ILoginUseCase _loginUseCase = loginUseCase;
+  private readonly ILogoutUseCase _logoutUseCase = logoutUseCase;
+  private readonly IRefreshTokenUseCase _refreshTokenUseCase= refreshTokenUseCase;
+  private readonly ILoginUsingGoogleUseCase _loginUsingGoogleUseCase = loginUsingGoogleUseCase;
   private readonly SignInManager<User> _signInManager = signInManager;
   private readonly IConfiguration _configuration = configuration;
 
