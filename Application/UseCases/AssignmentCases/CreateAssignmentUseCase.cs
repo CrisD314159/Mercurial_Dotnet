@@ -47,7 +47,7 @@ UserManager<User> userManager
         Topic = topic,
         User = user,
         DueDate = createAssignmentDTO.DueDate,
-        AssignmentState = AssignmentState.TODO,
+        TaskState = AssignmentState.TODO,
         LastUpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
         HasChecklist = false
       };

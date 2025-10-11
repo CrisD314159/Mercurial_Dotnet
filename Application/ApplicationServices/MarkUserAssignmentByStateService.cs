@@ -15,8 +15,8 @@ IAssignmentRepository assignmentRepository
   public async Task Execute(string userId, Guid assignmentId, AssignmentState state)
   {
     var assignment = await _assignmentRepository.GetAssignmentByAssignmentIdAndUserId(assignmentId, userId);
-    if (assignment.AssignmentState == state) throw new EntityValidationException($"Assignment is already marked as {state.ToString().ToLower()}");
-    assignment.AssignmentState = state;
+    if (assignment.TaskState == state) throw new EntityValidationException($"Assignment is already marked as {state.ToString().ToLower()}");
+    assignment.TaskState = state;
 
     await _assignmentRepository.UpdateAssingmentAsync(assignment);
   }

@@ -46,7 +46,7 @@ public class AssignmentRepositoryImpl(MercurialDBContext dbContext): IAssignment
 
     public async Task<Assignment> GetAssignmentByAssignmentNameUserIdAndState(string name, string userId, AssignmentState assignmentState)
     {
-       var assignment = await _dbContext.Assignments.Include(a => a.Note).Where(a => a.Title == name && a.UserId == userId && a.AssignmentState == assignmentState)
+       var assignment = await _dbContext.Assignments.Include(a => a.Note).Where(a => a.Title == name && a.UserId == userId && a.TaskState == assignmentState)
            .FirstOrDefaultAsync() ?? throw new EntityNotFoundException("Assignment not found");
 
        return assignment;
@@ -64,13 +64,13 @@ public class AssignmentRepositoryImpl(MercurialDBContext dbContext): IAssignment
     public async Task<List<AssignmentDTO>> GetUserAssignmentsAsync(string userId, int offset, int limit, AssignmentState assignmentState)
     {
         var assignments = await _dbContext.Assignments.Include(a => a.Note)
-            .Where(a => a.UserId == userId && a.AssignmentState == assignmentState)
+            .Where(a => a.UserId == userId && a.TaskState == assignmentState)
             .Select(a => new AssignmentDTO(
                 a.Id,
                 a.Title,
                 a.LastUpdatedAt,
                 a.DueDate,
-                a.AssignmentState,
+                a.TaskState,
                 a.SubjectId,
                 a.Subject.Name,
                 a.Topic.Id,
