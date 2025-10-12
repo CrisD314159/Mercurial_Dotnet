@@ -18,10 +18,10 @@ public class VerifyUserUseCase(UserManager<User> userManager): IVerifyUserUseCas
     var user = await _userManager.FindByEmailAsync(verifyuserDTO.Email)
       ?? throw new EntityNotFoundException("User does not exists");
 
-    if (await _userManager.IsEmailConfirmedAsync(user)) throw new VerificationException("User is already verified");
+    if (await _userManager.IsEmailConfirmedAsync(user)) throw new EntityValidationException("User is already verified");
 
     if (user.VerificationCode != verifyuserDTO.Code)
-      throw new VerificationException("Invalid code or email");
+      throw new EntityValidationException("Invalid code or email");
 
     user.EmailConfirmed = true;
     user.State = UserState.ACTIVE;

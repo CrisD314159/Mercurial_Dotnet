@@ -1,4 +1,5 @@
 using System.Security;
+using MercurialBackendDotnet.Application.ApplicationExceptions;
 using MercurialBackendDotnet.Application.ApplicationServices.ApplicationServicesInterfaces;
 using MercurialBackendDotnet.Application.ExternalServices;
 using MercurialBackendDotnet.Presentation.Dto.OutputDTO;
@@ -15,7 +16,7 @@ public class GenerateThirdPartyTokenService(IJwtService jwtService, IGenerateSes
   public async Task<LoginResponseDTO> Execute(string id, string email)
   {
     if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(email))
-      throw new VerificationException("id or email not provided");
+      throw new EntityValidationException("id or email not provided");
 
     var token = _jwtService.GenerateToken(id, email, "", false);
     var refreshToken = await _generateSessionService.CreateSession(id, email);

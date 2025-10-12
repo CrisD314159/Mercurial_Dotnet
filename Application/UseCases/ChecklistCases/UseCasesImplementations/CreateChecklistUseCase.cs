@@ -21,7 +21,7 @@ public class CreateChecklistUseCase(
     var assignment = await _assignmentRepository.GetAssignmentByIdAync(assignmentId)
     ?? throw new EntityNotFoundException("Assignment not found");
 
-    if(assignment.HasChecklist) throw new VerificationException("This assignment already has a checklist");
+    if(assignment.HasChecklist) throw new EntityValidationException("This assignment already has a checklist");
 
     CheckList checkList = new (){
       Assignment = assignment,

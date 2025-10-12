@@ -52,7 +52,7 @@ public class EmailServiceImpl(IConfiguration configuration): IEmailService
         await ReadFileToSendEmail(userName,
              "Recover your account",
              userEmail,
-             "Use the following code to recover your account",
+             "Click the following button to recover your account",
              userVerificationCode,
              "recoveryEmailTemplate"
              );

@@ -1,4 +1,5 @@
 using System.Security;
+using MercurialBackendDotnet.Application.ApplicationExceptions;
 using MercurialBackendDotnet.Application.ExternalServices;
 using MercurialBackendDotnet.Application.UseCases.UserCases.UseCasesInterfaces;
 using MercurialBackendDotnet.Domain.DomainExceptions;
@@ -20,11 +21,12 @@ public class RecoverUserAccountUseCase(UserManager<User> userManager, IEmailServ
     var user = await _userManager.FindByEmailAsync(recoverAccountDTO.Email)
       ?? throw new EntityNotFoundException("User does not exists");
 
-    if (user.IsThirdPartyUser) throw new VerificationException("Use your Google account to log in");
+    if (user.IsThirdPartyUser) throw new EntityValidationException("Use your Google account to log in");
 
     var recoveryCode = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-    await _emailService.SendRecoverAccountVerificationCode(user.Name, recoverAccountDTO.Email, recoveryCode);
+    var encodedCode = Uri.EscapeDataString(recoveryCode);
+    var link = $"https://mercurial-app.vercel.app/changePassword?changeToken={encodedCode}";
+    await _emailService.SendRecoverAccountVerificationCode(user.Name, recoverAccountDTO.Email, link);
 
   }
 }
