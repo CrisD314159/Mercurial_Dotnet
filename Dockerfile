@@ -37,7 +37,7 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 ENV ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
 
 # Copiar la carpeta templates manualmente
-COPY --from=build /src/Templates /app/Templates
+COPY --from=build /src/Presentation/Templates /app/Presentation/Templates
 
 # Comando de inicio de la aplicación
 ENTRYPOINT ["dotnet", "MercurialBackendDotnet.dll"]
