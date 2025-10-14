@@ -6,11 +6,26 @@
 
 MercurialBackendDotnet is a .NET backend API for managing users, assignments, subjects, topics, checklists, and notifications. It is designed to support a productivity or educational platform with robust authentication, authorization, and notification features.
 
-This backend is the main backend for Mercurial UI Application, you can fint the repository at (https://github.com/CrisD314159/mercurial_ui)
+This backend is the main backend for Mercurial UI Application, you can find the repository at (https://github.com/CrisD314159/mercurial_ui)
 
 You can find the app deployment at (https://mercurial-app.vercel.app)
 
 **Author:** [Crisdev](https://crisdev-pi.vercel.app)
+
+---
+
+## Clean Architecture
+
+This project follows the principles of **Clean Architecture** to ensure separation of concerns, testability, and maintainability. The solution is organized into distinct layers:
+
+- **Domain:** Core business logic, entities, and interfaces.
+- **Application:** Use cases, DTOs, and application services.
+- **Infrastructure:** External dependencies (database, email, notifications, etc.).
+- **Presentation:** API controllers and request/response handling.
+
+Each layer depends only on the layers inward, ensuring that business rules are isolated from frameworks and external technologies.
+
+---
 
 ## Features
 
@@ -23,20 +38,24 @@ You can find the app deployment at (https://mercurial-app.vercel.app)
 - **Database:** PostgreSQL with Entity Framework Core migrations.
 - **Email Integration:** Google SMTP API support for sending emails.
 
+---
+
 ## Project Structure
 
 ```
-Controllers/         # API controllers for each resource
-DB/                  # Entity Framework Core DbContext
-Dto/                 # Data Transfer Objects (InputDTO, OutputDTO)
-Exceptions/          # Custom exception classes
-Migrations/          # EF Core database migrations
-Model/               # Entity models
-Services/            # Business logic and interfaces
-Templates/           # Email HTML templates
-Utils/               # Utility classes (e.g., EmailUtil)
-Validations/         # FluentValidation validators
+/Domain/              # Core entities, enums, interfaces (business rules)
+/Application/         # Use cases, DTOs, application services, validators
+/Infrastructure/      # Data access (EF Core), email, notifications, external services
+/Presentation/        # API controllers, request/response models
+/DB/                  # Entity Framework Core DbContext
+/Migrations/          # EF Core database migrations
+/Templates/           # Email HTML templates
+/Utils/               # Utility classes (e.g., EmailUtil)
 ```
+
+> **Note:** Folders like `Controllers/`, `Dto/`, `Exceptions/`, `Services/`, and `Validations/` are now grouped under the appropriate Clean Architecture layers.
+
+---
 
 ## Getting Started
 
@@ -82,6 +101,8 @@ docker build -t mercurial-backend .
 docker run -p 5000:80 --env-file .env mercurial-backend
 ```
 
+---
+
 ## API Overview
 
 - **Authentication:** JWT-based, endpoints secured with `[Authorize]`
@@ -90,6 +111,8 @@ docker run -p 5000:80 --env-file .env mercurial-backend
 - **Topics:** `/Topic` (CRUD)
 - **Checklists:** `/CheckList` (CRUD, add/remove/mark nodes)
 - **Notifications:** `/PushNotification` (schedule, send)
+
+---
 
 ## Technologies Used
 
@@ -100,4 +123,3 @@ docker run -p 5000:80 --env-file .env mercurial-backend
 - JWT Authentication
 - Google SMTP
 - Docker
-
