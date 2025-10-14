@@ -23,6 +23,7 @@ public static class ApplicationServiceRegistration
     services.AddScoped<IVerifyValidAssignmentService, VerifyValidAssignmentService>();
     services.AddScoped<IVerifyValidSubjectService, VerifyValidSubjectService>();
     services.AddScoped<IVerifyValidTopicService, VerifyValidTopicService>();
+    services.AddScoped<IVerifyValidAssignmentOnUpdate, VerifyValidAssignmentOnUpdateService>();
 
     return services;
   }

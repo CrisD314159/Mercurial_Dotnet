@@ -16,17 +16,17 @@ public class UpdateAssignmentUseCase(
 IAssignmentRepository assignmentRepository,
 ISubjectRepository subjectRepository,
 ITopicRepository topicRepository,
-IVerifyValidAssignmentService verifyValidAssignmentService
+IVerifyValidAssignmentOnUpdate verifyValidAssignmentService
 ) : IUpdateAssignmentUseCase
 {
   private readonly IAssignmentRepository _assignmentRepository = assignmentRepository;
   private readonly ISubjectRepository _subjectRepository = subjectRepository;
   private readonly ITopicRepository _topicRepository = topicRepository;
 
-  private readonly IVerifyValidAssignmentService _verifyValidAssignment= verifyValidAssignmentService;
+  private readonly IVerifyValidAssignmentOnUpdate _verifyValidAssignment= verifyValidAssignmentService;
 public async Task Execute(string userId, UpdateAssignmentDTO updateAssignmentDTO)
   {
-    await _verifyValidAssignment.Execute(userId, updateAssignmentDTO.Title, updateAssignmentDTO.SubjectId);
+    await _verifyValidAssignment.Execute(updateAssignmentDTO.AssignmentId, userId, updateAssignmentDTO.Title, updateAssignmentDTO.SubjectId);
     
     var assignment = await _assignmentRepository.GetAssignmentByAssignmentIdAndUserId(updateAssignmentDTO.AssignmentId, userId);
 
